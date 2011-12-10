@@ -257,9 +257,14 @@
 				return this.each(function(){
 					var $slideshow = $(this);
 
+					var disableNavigation = false;
+
 					if (params) {
 						if (params.height) {
 							$slideshow.css("height", isNaN(params.height) ? params.height : params.height + "px");
+						}
+						if (params.disableNavigation) {
+							allowNavigation = true;
 						}
 					}
 
@@ -297,68 +302,105 @@
 						}
 					}
 
-					var $arrowleft = $("<div class='-cakedev-slideshow-arrowleft'></div>");
-					var $arrowright = $("<div class='-cakedev-slideshow-arrowright'></div>");
+					if (!disableNavigation) {
+						jcakedev.slideshow.setNavigationControls(slideshow, width, height);
+					}
+				});
+			},
 
-					$slideshow.append($arrowleft);
-					$slideshow.append($arrowright);
+			setNavigationControls: function(slideshow, width, height) {
+				var $slideshow = slideshow.element;
+				var $slides = slideshow.slides;
 
-					$arrowleft.css("left", "10px");
-					$arrowleft.css("top",
-						"-" + (
-								height * $slides.length -
-								parseInt(height / 2, 10) +
-								parseInt($arrowleft.height() / 2, 10)
-							) +
-						"px"
-					);
+				var $arrowleft = $("<div class='-cakedev-slideshow-arrowleft'></div>");
+				var $arrowright = $("<div class='-cakedev-slideshow-arrowright'></div>");
 
-					$arrowright.css("left", (width - $arrowright.width() - 10) + "px");
-					$arrowright.css("top",
-						"-" + (
-								height * $slides.length -
-								parseInt(height / 2, 10) +
-								parseInt($arrowright.height() / 2, 10) +
-								$arrowleft.height()
-							) +
-						"px"
-					);
+				$slideshow.append($arrowleft);
+				$slideshow.append($arrowright);
 
-					$arrowleft.click(function(){
-						if (!slideshow.animating && slideshow.currentIndex > 0) {
-							slideshow.animating = true;
-							jcakedev.slideshow.changeSlide(
-								slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex - 1), true,
-								function() { slideshow.animating = false; }
-							);
+				$arrowleft.css("left", "10px");
+				$arrowleft.css("top",
+					"-" + (
+							height * $slides.length -
+							parseInt(height / 2, 10) +
+							parseInt($arrowleft.height() / 2, 10)
+						) +
+					"px"
+				);
 
-							slideshow.currentIndex = slideshow.currentIndex - 1;
-						}
-					});
+				$arrowright.css("left", (width - $arrowright.width() - 10) + "px");
+				$arrowright.css("top",
+					"-" + (
+							height * $slides.length -
+							parseInt(height / 2, 10) +
+							parseInt($arrowright.height() / 2, 10)
+							//$arrowleft.height()
+						) +
+					"px"
+				);
 
-					$arrowright.click(function(){
-						if (!slideshow.animating && slideshow.currentIndex < slideshow.slides.length - 1) {
-							slideshow.animating = true;
-							jcakedev.slideshow.changeSlide(
-								slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex + 1), false,
-								function() { slideshow.animating = false; }
-							);
+				$arrowleft.hide();
+				$arrowright.hide();
 
-							slideshow.currentIndex = slideshow.currentIndex + 1;
-						}
-					});
+				$slideshow.on("mousemove", function(event){
+					var x = event.pageX - $(this).offset().left;
+
+					if (x <= 60) {
+						$arrowleft.show();
+						return;
+					}
+					else if ($arrowleft.is(":visible")) {
+						$arrowleft.hide();
+					}
+
+					if (x >= width - 60) {
+						$arrowright.show();
+					}
+					else if ($arrowright.is(":visible")) {
+						$arrowright.hide();
+					}
+				});
+
+				$slideshow.on("mouseout", function(){
+					$arrowleft.hide();
+					$arrowright.hide();
+				});
+
+				$arrowleft.on("click", function(){
+					if (!slideshow.animating && slideshow.currentIndex > 0) {
+						slideshow.animating = true;
+						jcakedev.slideshow.changeSlide(
+							slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex - 1), true,
+							function() { slideshow.animating = false; }
+						);
+
+						slideshow.currentIndex = slideshow.currentIndex - 1;
+					}
+				});
+
+				$arrowright.on("click", function(){
+					if (!slideshow.animating && slideshow.currentIndex < slideshow.slides.length - 1) {
+						slideshow.animating = true;
+						jcakedev.slideshow.changeSlide(
+							slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex + 1), false,
+							function() { slideshow.animating = false; }
+						);
+
+						slideshow.currentIndex = slideshow.currentIndex + 1;
+					}
 				});
 			},
 
 			changeSlide: function($current, $next, increase, callback) {
 				$current.css("z-index", 990);
 				$next.css("z-index", 991);
-				$next.animate({marginLeft: "0px"}, 400, function(){
-					$current.css("margin-left", (increase ? "" : "-") + $current.width() + "px");
+				$next.animate({marginLeft: "0px"}, 400, "linear", function(){
 					if (callback && typeof(callback) == "function") {
 						callback();
 					}
 				});
+
+				$current.animate({marginLeft: (increase ? "" : "-") + $current.width() + "px"}, 400, "linear");
 			},
 
 			getCurrentElement: function() {

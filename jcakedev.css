@@ -118,12 +118,14 @@ div.-cakedev-slideshow {
 	overflow: hidden;
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-slide {
-	left: 0px;
+	overflow: hidden;
 	position: relative;
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft,
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
-	background: #aaa;
+	background-color: #555;
+	background-position: center center;
+	background-repeat: no-repeat;
 	cursor: pointer;
 	height: 100px;
 	position: relative;
@@ -133,15 +135,20 @@ div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
+
+	opacity: .40;
+	-khtml-opacity: 0.4;
+	-moz-opacity: .40;
+	filter: alpha(opacity=40);
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft:hover,
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowright:hover {
-	background: #bbb;
+	background-color: #aaa;
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft {
-	
+	background-image: url("images/arrowleft.png");
 }
 
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
-	
+	background-image: url("./images/arrowright.png");
 }
