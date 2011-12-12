@@ -333,38 +333,11 @@
 					"-" + (
 							height * $slides.length -
 							parseInt(height / 2, 10) +
-							parseInt($arrowright.height() / 2, 10)
-							//$arrowleft.height()
+							parseInt($arrowright.height() / 2, 10) +
+							$arrowleft.height()
 						) +
 					"px"
 				);
-
-				$arrowleft.hide();
-				$arrowright.hide();
-
-				$slideshow.on("mousemove", function(event){
-					var x = event.pageX - $(this).offset().left;
-
-					if (x <= 60) {
-						$arrowleft.show();
-						return;
-					}
-					else if ($arrowleft.is(":visible")) {
-						$arrowleft.hide();
-					}
-
-					if (x >= width - 60) {
-						$arrowright.show();
-					}
-					else if ($arrowright.is(":visible")) {
-						$arrowright.hide();
-					}
-				});
-
-				$slideshow.on("mouseout", function(){
-					$arrowleft.hide();
-					$arrowright.hide();
-				});
 
 				$arrowleft.on("click", function(){
 					if (!slideshow.animating && slideshow.currentIndex > 0) {
