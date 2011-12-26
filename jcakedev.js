@@ -7,91 +7,99 @@
 			combos: [],
 			
 			create: function(params) {
-				var options = params.options;
-				var delegate = params.delegate;
-				var defaultValue = params.defaultValue;
+				var options = [];
+				var delegate = null;
+				var defaultValue = null;
+
+				if (params) {
+					options = params.options;
+					delegate = params.delegate;
+					defaultValue = params.defaultValue;
+				}
+
+				if (!options || !options.length) {
+					console.log("No options were defined for the combo(s)");
+					return this;
+				}
 
 				return this.each(function(){
-					if (options && options.length) {
-						if (!$(this).hasClass("-cakedev-custom-combo")) {
-							$(this).addClass("-cakedev-custom-combo")
+					var $combo = $(this);
+
+					if (!$combo.hasClass("-cakedev-custom-combo")) {
+						$combo.addClass("-cakedev-custom-combo")
+					}
+					
+					var combo = {
+						element: $combo,
+						options: options,
+						delegate: delegate,
+						selectedIndex: 0
+					};
+					
+					var selectedOptionIndex = 0;
+					var optionsList = "";
+					
+					for (var i = 0; i < options.length; i++) {
+						if (defaultValue != null && options[i].value == defaultValue) {
+							selectedOptionIndex = i;
 						}
 						
-						var newOption = {
-							element: $(this),
-							options: options,
-							delegate: delegate,
-							selectedIndex: 0
-						};
-						
-						var selectedOptionIndex = 0;
-						var optionsList = "";
-						
-						for (var i = 0; i < options.length; i++) {
-							if (defaultValue != null && options[i].value == defaultValue) {
-								selectedOptionIndex = i;
-							}
-							
-							optionsList +=
-								"<li class='-cakedev-combo-option-" + i + "'>" +
-									"<a href='#'>" + options[i].text + "</a>" +
-								"</li>";
-						}
-
-						newOption.selectedIndex = selectedOptionIndex;
-						var selectedOption = options[selectedOptionIndex];
-						
-						$(this).append(
-							"<table style='border-collapse: collapse;'>" +
-								"<tr>" +
-									"<td class='-cakedev-combo-optionText'>" + selectedOption.text + "</td>" +
-									"<td class='-cakedev-combo-arrow'><div></div></td>" +
-								"</tr>" +
-							"</table>"
-						);
-						
-						$(this).append(
-							"<div class='-cakedev-combo-list-container'>" +
-								"<ul>" +
-									optionsList +
-								"</ul>" +
-							"</div>"
-						);
-
-						$(this).find("li a").each(function(index){
-							$(this).click(function(event){
-								event.preventDefault();
-
-								var $combo = $(this).closest(".-cakedev-custom-combo");
-								var combo = jcakedev.combo.getCurrentElement.call($combo);
-
-								if (combo) {							
-									jcakedev.combo.setValue.call(
-										$combo,
-										combo.options[index].value
-									);
-
-									combo.delegate(combo.options[index], $combo);
-								}
-							});
-						});
-						
-						$(this).find(".-cakedev-combo-option-" + selectedOptionIndex).hide();
-						
-						var $list = $(this).find(".-cakedev-combo-list-container");
-						$list.hide();
-						
-						$(this).find("table").click(function(){
-							if ($list.is(":visible")) {
-								$list.hide();
-							}
-							else {
-								$list.show();
-							}
-						});
+						optionsList +=
+							"<li class='-cakedev-combo-option-" + i + "'>" +
+								"<a href='#'>" + options[i].text + "</a>" +
+							"</li>";
 					}
 
-					jcakedev.combo.combos.push(newOption)
+					combo.selectedIndex = selectedOptionIndex;
+					var selectedOption = options[selectedOptionIndex];
+					
+					$combo.append(
+						"<table style='border-collapse: collapse;'>" +
+							"<tr>" +
+								"<td class='-cakedev-combo-optionText'>" + selectedOption.text + "</td>" +
+								"<td class='-cakedev-combo-arrow'><div></div></td>" +
+							"</tr>" +
+						"</table>"
+					);
+					
+					$combo.append(
+						"<div class='-cakedev-combo-list-container'>" +
+							"<ul>" +
+								optionsList +
+							"</ul>" +
+						"</div>"
+					);
+
+					$combo.find("li a").each(function(index){
+						$(this).on("click", function(event){
+							event.preventDefault();
+
+							jcakedev.combo.setValue.call($combo, combo.options[index].value);
+
+							if (combo.delegate && typeof(combo.delegate) == "function") {
+								combo.delegate(combo.options[index], $combo);
+							}
+							else {
+								console.log("Delegate for combo is not a valid function.");
+							}
+						});
+					});
+					
+					$combo.find(".-cakedev-combo-option-" + selectedOptionIndex).hide();
+					
+					var $list = $combo.find(".-cakedev-combo-list-container");
+					$list.hide();
+					
+					$combo.find("table").click(function(){
+						if ($list.is(":visible")) {
+							$list.hide();
+						}
+						else {
+							$list.show();
+						}
+					});
+
+					jcakedev.combo.combos.push(combo);
 				});
 			},
 
@@ -150,28 +158,30 @@
 			create: function(params) {
 				return this.each(function(){
 					var $tabControl = $(this);
+
 					if (!$tabControl.hasClass("-cakedev-tabs")) {
 						$tabControl.addClass("-cakedev-tabs");
 					}
 
-					var newTabControl = {
+					var tabControl = {
 						element: $tabControl,
 						tabs: [],
+						currentTab: null,
 						properties: {
 							direction: "top",
 							bgcolor: "#3c78b5"
 						}
 					};
 
-					jcakedev.tab.tabControls.push(newTabControl);
+					jcakedev.tabs.tabControls.push(tabControl);
 					
 					if (params) {
-						if (params.direction)	newTabControl.properties.direction = params.direction;
-						if (params.bgcolor)		newTabControl.properties.bgcolor = params.bgcolor;
+						if (params.direction)	tabControl.properties.direction = params.direction;
+						if (params.bgcolor)		tabControl.properties.bgcolor = params.bgcolor;
 					}
 					
-					var tabHeaderClass = newTabControl.properties.direction == "bottom" ? "-cakedev-tabHeader-bottom" : "-cakedev-tabHeader-top";
-					$tabControl.css("background-color", newTabControl.properties.bgcolor);
+					var tabHeaderClass = tabControl.properties.direction == "bottom" ? "-cakedev-tabHeader-bottom" : "-cakedev-tabHeader-top";
+					$tabControl.css("background-color", tabControl.properties.bgcolor);
 
 					var $tabHeadersContainer = $("<div class='-cakedev-tabHeaders-container'></div>");
 					var $tabs = $tabControl.children("div");
@@ -195,21 +205,21 @@
 									"</span>" +
 								"</td>";
 
-							newTabControl.tabs.push($tab);
+							tabControl.tabs.push($tab);
 						}
 						
-						if (newTabControl.properties.direction == "bottom") {
+						if (tabControl.properties.direction == "bottom") {
 							$tabControl.append($tabHeadersContainer);
 						}
 						else {
 							$tabControl.prepend($tabHeadersContainer);
 						}
 						
-						$tabHeadersContainer.append("<table cellpadding='0px' cellspacing='0px'><tr>" + tabHeadersContent + "</tr></table>");
+						$tabHeadersContainer.append("<table><tr>" + tabHeadersContent + "</tr></table>");
 
 						var $tabHeaders = $tabHeadersContainer.find(".-cakedev-tabHeader");
 						for (var i = 0; i < $tabHeaders.length; i++) {
-							$tabHeaders.eq(i).click(function(){
+							$tabHeaders.eq(i).on("click", function(){
 								var $currentTabControl = $(this).closest(".-cakedev-tabs");
 								var $headersContainer = $(this).closest(".-cakedev-tabHeaders-container");
 
@@ -224,16 +234,32 @@
 								}
 
 								$headers.removeClass("-cakedev-selected-tab").eq(index).addClass("-cakedev-selected-tab");
-								$currentTabControl.children(".-cakedev-tab").hide().eq(index).show();
+								$currentTabControl.children(".-cakedev-tab").hide();
+
+								var $currentTab = $currentTabControl.children(".-cakedev-tab").eq(index);
+								$currentTab.show();
+
+								tabControl.currenTab = $currentTab;
 							});
 						}
 
 						$tabHeadersContainer.find(".-cakedev-tabHeader").eq(0).addClass("-cakedev-selected-tab");
 						$tabControl.children(".-cakedev-tab").not(":eq(0)").hide();
 						
-						jcakedev.tabs.tabControls.push(newTabControl);
+						tabControl.currenTab = $tabControl.children(".-cakedev-tab").eq(0);
 					}
 				});
+			},
+
+			getActiveTab: function() {
+				var $activeTab = null;
+				var tabControl = jcakedev.tabs.getCurrentElement.call(this);
+
+				if (tabControl) {
+					$activeTab = tabControl.currentTab;
+				}
+
+				return $activeTab;
 			},
 
 			getCurrentElement: function() {
@@ -258,13 +284,29 @@
 					var $slideshow = $(this);
 
 					var disableNavigation = false;
+					var rotate = true;
+					var animationSpeed = 400;
+					var autoNavigate = false;
+					var delay = 2000;
 
 					if (params) {
 						if (params.height) {
 							$slideshow.css("height", isNaN(params.height) ? params.height : params.height + "px");
 						}
 						if (params.disableNavigation) {
-							allowNavigation = true;
+							disableNavigation = true;
+						}
+						if (params.rotate != null && !params.rotate) {
+							rotate = false;
+						}
+						if (params.animationSpeed) {
+							animationSpeed = params.animationSpeed;
+						}
+						if (params.autoNavigate != null && params.autoNavigate) {
+							autoNavigate = true;
+						}
+						if (params.delay && !isNaN(params.delay)) {
+							delay = params.delay;
 						}
 					}
 
@@ -274,7 +316,11 @@
 						element: $slideshow,
 						slides: $slides,
 						currentIndex: 0,
-						animating: false
+						animationSpeed: animationSpeed,
+						animating: false,
+						rotate: rotate,
+						delay: delay,
+						autoNavigate: autoNavigate
 					};
 
 					jcakedev.slideshow.slideshows.push(slideshow);
@@ -304,6 +350,9 @@
 
 					if (!disableNavigation) {
 						jcakedev.slideshow.setNavigationControls(slideshow, width, height);
+					}
+					if (autoNavigate) {
+						jcakedev.slideshow.setAutoNavigation(slideshow);
 					}
 				});
 			},
@@ -340,40 +389,149 @@
 				);
 
 				$arrowleft.on("click", function(){
-					if (!slideshow.animating && slideshow.currentIndex > 0) {
-						slideshow.animating = true;
-						jcakedev.slideshow.changeSlide(
-							slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex - 1), true,
-							function() { slideshow.animating = false; }
-						);
-
-						slideshow.currentIndex = slideshow.currentIndex - 1;
-					}
+					slideshow.autoNavigate = false;
+					jcakedev.slideshow.movePrevious.call(slideshow.element);
 				});
 
 				$arrowright.on("click", function(){
-					if (!slideshow.animating && slideshow.currentIndex < slideshow.slides.length - 1) {
-						slideshow.animating = true;
-						jcakedev.slideshow.changeSlide(
-							slideshow.slides.eq(slideshow.currentIndex), slideshow.slides.eq(slideshow.currentIndex + 1), false,
-							function() { slideshow.animating = false; }
-						);
-
-						slideshow.currentIndex = slideshow.currentIndex + 1;
-					}
+					slideshow.autoNavigate = false;
+					jcakedev.slideshow.moveNext.call(slideshow.element);
 				});
 			},
 
-			changeSlide: function($current, $next, increase, callback) {
+			setAutoNavigation: function(slideshow) {
+				jcakedev.slideshow.autoNavigate(slideshow);
+			},
+
+			autoNavigate: function(slideshow) {
+				setTimeout(function(){
+					if (slideshow.autoNavigate) {
+						jcakedev.slideshow.moveNext.call(slideshow.element, function(){
+							jcakedev.slideshow.autoNavigate(slideshow);
+						});
+					}
+				}, slideshow.delay);
+			},
+
+			moveNext: function(callback, animationSpeed) {
+				var slideshow = jcakedev.slideshow.getCurrentElement.call(this);
+
+				if (slideshow) {
+					if (slideshow.animating) {
+						return;
+					}
+
+					if (slideshow.slides.length > 1) {
+						var speed = animationSpeed != null ? animationSpeed : slideshow.animationSpeed;
+
+						if (slideshow.currentIndex == slideshow.slides.length - 1) {
+							if (slideshow.rotate) {
+								speed = Math.round(speed / slideshow.slides.length) + 100;
+								jcakedev.slideshow.moveToFirst(slideshow, speed, callback);
+							}
+						}
+						else {
+							slideshow.animating = true;
+
+							jcakedev.slideshow.changeSlide(
+								slideshow.slides.eq(slideshow.currentIndex),
+								slideshow.slides.eq(slideshow.currentIndex + 1),
+								speed,
+								"f",
+								function() {
+									slideshow.animating = false;
+									slideshow.currentIndex++;
+									if (callback && typeof(callback) == "function") {
+										callback();
+									}
+								}
+							);
+						}
+					}
+				}
+			},
+
+			movePrevious: function(callback, animationSpeed) {
+				var slideshow = jcakedev.slideshow.getCurrentElement.call(this);
+
+				if (slideshow) {
+					if (slideshow.animating) {
+						return;
+					}
+
+					if (slideshow.slides.length > 1) {
+						var speed = animationSpeed != null ? animationSpeed : slideshow.animationSpeed;
+
+						if (slideshow.currentIndex == 0) {
+							if (slideshow.rotate) {
+								speed = Math.round(speed / slideshow.slides.length) + 100;
+								jcakedev.slideshow.moveToLast(slideshow, speed, callback);
+							}
+						}
+						else {
+							slideshow.animating = true;
+
+							jcakedev.slideshow.changeSlide(
+								slideshow.slides.eq(slideshow.currentIndex),
+								slideshow.slides.eq(slideshow.currentIndex - 1),
+								speed,
+								"b",
+								function() {
+									slideshow.animating = false;
+									slideshow.currentIndex--;
+									if (callback && typeof(callback) == "function") {
+										callback();
+									}
+								}
+							);
+						}
+					}
+				}
+			},
+
+			moveToFirst: function(slideshow, slideAnimationSpeed, callback) {
+				if (slideshow.currentIndex > 0) {
+					jcakedev.slideshow.movePrevious.call(slideshow.element,
+						function() { jcakedev.slideshow.moveToFirst(slideshow, slideAnimationSpeed, callback); },
+						slideAnimationSpeed
+					);
+				}
+				else {
+					if (callback && typeof(callback) == "function") {
+						callback();
+					}
+				}
+			},
+
+			moveToLast: function(slideshow, slideAnimationSpeed, callback) {
+				if (slideshow.currentIndex < slideshow.slides.length - 1) {
+					jcakedev.slideshow.moveNext.call(slideshow.element,
+						function() { jcakedev.slideshow.moveToLast(slideshow, slideAnimationSpeed, callback); },
+						slideAnimationSpeed
+					);
+				}
+				else {
+					if (callback && typeof(callback) == "function") {
+						callback();
+					}
+				}
+			},
+
+			changeSlide: function($current, $new, speed, direction, callback) {
 				$current.css("z-index", 990);
-				$next.css("z-index", 991);
-				$next.animate({marginLeft: "0px"}, 400, "linear", function(){
+				$new.css("z-index", 991);
+				$new.animate({marginLeft: "0px"}, speed, "linear", function(){
 					if (callback && typeof(callback) == "function") {
 						callback();
 					}
 				});
 
-				$current.animate({marginLeft: (increase ? "" : "-") + $current.width() + "px"}, 400, "linear");
+				if (direction == "f") {
+					$current.animate({ marginLeft: "-" + $current.width() + "px" }, speed, "linear");
+				}
+				else if (direction == "b") {
+					$current.animate({ marginLeft: $current.width() + "px" }, speed, "linear");
+				}
 			},
 
 			getCurrentElement: function() {
@@ -404,6 +562,9 @@
 				else if (action == "setValue") {
 					return jcakedev.combo.setValue.call(this, params);
 				}
+				else {
+					console.log(action + " is not a valid action for combo");
+				}
 			}
 			else {
 				return jcakedev.combo.create.call(this, params);
@@ -415,6 +576,12 @@
 				if (action == "create") {
 					return jcakedev.tabs.create.call(this, params);
 				}
+				else if (action == "getActiveTab") {
+					return jcakedev.tabs.getActiveTab.call(this);
+				}
+				else {
+					console.log(action + " is not a valid action for tabs");
+				}
 			}
 			else {
 				return jcakedev.tabs.create.call(this, params);
@@ -425,6 +592,9 @@
 			if (action) {
 				if (action == "create") {
 					return jcakedev.slideshow.create.call(this, params);
+				}
+				else {
+					console.log(action + " is not a valid action for slideshow");
 				}
 			}
 			else {

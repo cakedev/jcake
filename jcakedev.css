@@ -7,7 +7,7 @@ div.-cakedev-custom-combo {
 }
 div.-cakedev-custom-combo table:hover .-cakedev-combo-optionText,
 div.-cakedev-custom-combo table:hover .-cakedev-combo-arrow {
-	background: #3C78B5;
+	background: #3c78b5;
 	color: #fff;
 }
 div.-cakedev-custom-combo table {
@@ -109,6 +109,10 @@ div.-cakedev-tabs span.-cakedev-selected-tab:hover {
 }
 div.-cakedev-tabs .-cakedev-tabHeaders-container table {
 	border-collapse: collapse;
+}
+div.-cakedev-tabs .-cakedev-tabHeaders-container table tr td {
+	border-collapse: collapse;
+	padding: 0px;
 }
 
 /* Slideshow */
