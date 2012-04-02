@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<link type="text/css" rel="stylesheet" href="jcakedev/jcakedev.css" />
+
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="jcakedev/jcakedev.js"></script>
+		<script type="text/javascript" src="jcakedev/jcakedev-combo.js"></script>
+		<script type="text/javascript" src="jcakedev/jcakedev-tabs.js"></script>
+		<script type="text/javascript" src="jcakedev/jcakedev-slideshow.js"></script>
+
+		<script type="text/javascript">
+			
+			function colocarValor() {
+				$("#combo").jcakedev("combo", "setValue", $("#valor").val());
+			}
+
+			function obtenerValor() {
+				alert($("#combo").jcakedev("combo", "getValue"));
+			}
+
+			$(document).ready(function(){
+
+				// Combo
+				/////////////////
+
+				$("#combo").jcakedev("combo", "create", {
+					options: [
+						{ text: "Primera opci\u00f3n", value: "valor1" },
+						{ text: "Segunda opci\u00f3n", value: "valor2" },
+						{ text: "Tercera opci\u00f3n", value: "valor3" },
+					],
+					delegate: function(option) {
+						$("#valorSeleccionado").text(option.text + ": " + option.value);
+					},
+					defaultValue: "valor2"  // opcional
+				});
+
+				// Tab Control
+				/////////////////
+
+				$("#tabcontrol").jcakedev("tabs");
+
+				// Slideshow
+				/////////////////
+
+				// Creación con parámetros
+
+				// $("#slideshow").jcakedev("slideshow", "create", {
+				// 	disableNavigation: true,
+				// 	rotate: false,
+				// 	animationSpeed: 1000,
+				// 	height: 400,
+				// 	autoNavigate: true
+				// 	delay: 2000
+				// });
+
+				// Nota: Todos los parámetros son opcionales
+
+				// Creación corta sin parámetros
+
+				$("#slideshow").jcakedev("slideshow");
+
+				// Creación alternativa
+
+				// $("#slideshow").jcakedev("slideshow", "create");
+
+			});
+
+		</script>
+
+	</head>
+
+	<body>
+
+		<div id="combo"></div>
+
+		<h3 style="margin: 15px 0px 15px 0px; padding: 0px;" id="valorSeleccionado">( Selecciona una opci&oacute;n )</h3>
+		<input type="text" id="valor" value="valor1" />
+		<button onclick="colocarValor()">Colocar valor</button>
+		<button onclick="obtenerValor()">Obtener valor</button>
+		<br />
+		(valor1, valor2, valor3)
+
+		<br /><br />
+
+		<hr />
+
+		<br />
+
+		<div id="tabcontrol">
+			<div title="Primer tab">
+				Contenido del primer tab
+			</div>
+			<div title="Segundo tab">
+				Contenido del segundo tab
+			</div>
+			<div title="Tercer tab">
+				Contenido del tercer tab
+			</div>
+		</div>
+
+		<br /><br />
+
+		<hr />
+
+		<br />
+
+		<div style="background: #555; height: 300px;" id="slideshow">
+			<div style="background: #f00;">
+				<h1>Slide 1</h1>
+				<h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2>
+			</div>
+			<div style="background: #0f0;">
+				<h1>Slide 2</h1>
+				<h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2>
+			</div>
+			<div style="background: #00f;">
+				<h1>Slide 3</h1>
+				<h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2><h2>Esto es un texto de relleno para el slide</h2>
+			</div>
+		</div>
+
+	</body>
+
+</html>
