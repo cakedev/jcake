@@ -7,7 +7,7 @@ jcakedev =
 
       tabs: (action, params) ->
         throw "plugin definition not found exception (tabs)" if not jcakedev.tabs?
-        jcakedev.combo.invoke.call this, action, params
+        jcakedev.tabs.invoke.call this, action, params
 
       slideshow: (action, params) ->
         throw "plugin definition not found exception (slideshow)" if not jcakedev.slideshow?
@@ -15,16 +15,13 @@ jcakedev =
 
     $.fn.jcakedev = (plugin, action, params) ->
       if this.length
-        if plugin?
-          if plugins[plugin]?
+        if plugin? and plugins[plugin]?
             plugins[plugin].call this, action, params
-          else
-            console.log "'#{plugin}' is not a valid plugin name"
         else
-          console.log "no plugin name was specified"
-    0
+          throw "invalid plugin name exception"
+    null
 
 if jQuery?
   jcakedev._init jQuery
 else
-  throw "jQuery not found"
+  throw "jQuery not found exception"
