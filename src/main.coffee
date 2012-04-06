@@ -3,20 +3,20 @@ jcakedev =
     plugins =
       combo: (action, params) ->
         throw "plugin definition not found exception (combo)" if not jcakedev.combo?
-        jcakedev.combo.invoke.call this, action, params
+        jcakedev.combo.invoke.call @, action, params
 
       tabs: (action, params) ->
         throw "plugin definition not found exception (tabs)" if not jcakedev.tabs?
-        jcakedev.tabs.invoke.call this, action, params
+        jcakedev.tabs.invoke.call @, action, params
 
       slideshow: (action, params) ->
         throw "plugin definition not found exception (slideshow)" if not jcakedev.slideshow?
-        jcakedev.slideshow.call this, action, params
+        jcakedev.slideshow.call @, action, params
 
     $.fn.jcakedev = (plugin, action, params) ->
-      if this.length
+      if @length
         if plugin? and plugins[plugin]?
-            plugins[plugin].call this, action, params
+            plugins[plugin].call @, action, params
         else
           throw "invalid plugin name exception"
     null

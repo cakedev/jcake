@@ -3,13 +3,10 @@
 
 	<head>
 
-		<link type="text/css" rel="stylesheet" href="jcakedev/jcakedev.css" />
+		<link type="text/css" rel="stylesheet" href="../res/jcakedev.css" />
 
 		<script type="text/javascript" src="jquery.js"></script>
-		<script type="text/javascript" src="jcakedev/jcakedev.js"></script>
-		<script type="text/javascript" src="jcakedev/jcakedev-combo.js"></script>
-		<script type="text/javascript" src="jcakedev/jcakedev-tabs.js"></script>
-		<script type="text/javascript" src="jcakedev/jcakedev-slideshow.js"></script>
+		<script type="text/javascript" src="../lib/jcakedev.js"></script>
 
 		<script type="text/javascript">
 			
@@ -26,6 +23,7 @@
 				// Combo
 				/////////////////
 
+				
 				$("#combo").jcakedev("combo", "create", {
 					options: [
 						{ text: "Primera opci\u00f3n", value: "valor1" },
@@ -37,6 +35,7 @@
 					},
 					defaultValue: "valor2"  // opcional
 				});
+				
 
 				// Tab Control
 				/////////////////
@@ -61,7 +60,7 @@
 
 				// Creación corta sin parámetros
 
-				$("#slideshow").jcakedev("slideshow");
+				// $("#slideshow").jcakedev("slideshow");
 
 				// Creación alternativa
 

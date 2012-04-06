@@ -29,7 +29,7 @@ div.-cakedev-custom-combo .-cakedev-combo-arrow {
 	padding: 0px 10px 0px 0px;
 }
 div.-cakedev-custom-combo .-cakedev-combo-arrow div {
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAABdCAYAAAAxOO9bAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK8AAACvABQqw0mAAAAhxJREFUeNrt29FxgkAUhWFKsARKsARKsIQtwRIowRIoYUvYEsxj3kgHdEDQWR0TExE453DvKDP32W/+cZSF3aLv+8LbFG+0Cn26Pj6/tsPEYfoF0w4TCvJ1Rg8fVA3TLQTfThpmw0a3QPBljiz4Bd2TJjLRHRFesdA1EX1koTfk2gGOzj95ByK6ZaFLIhpa+4rO8IZZG/UT+BvNrl3D0YLaHaL2X2jzte/QGZ4s1/4PXZFrH+BoQe3TlAw0u3YDR1uuPYYOZHSEozO8JcMrBppdO8HRFms/izZV+yl0hndk+I6BrsnoloHeCGoHKNpS7aloE7UnoUW1R29d56DZi4TRhcJktGBJNlp7LnrV2rPQwtolGq2o3UDRGR4F8BKNrtaovQgtWpLd1UagFbUTFC2sXaHRO2VtCFq0JLvWRqKDAH2EooW1AxqtqN2i0bUA3SG/04pVzfnuD4neK74aHn/yAvLPJagqI9GyyqgbpuDuhilvRumVT1U9LAISeuWS1JWXLmwVlSN6NZ7WWNRaf1jTeHss9vAd42s8gFz74eOch+qrV56DPqxd2eKLov1rv5Kz9DpuCtpMZUsv9HdQtMutE+42qVis/AyaXXn73uLmbjOh5cqP0OwNsiUUnY9D+dqK7G7Tt8vt9R4q/0C7PDLCPi5SAC+/x6C8HjhzebTP5N/1GNrlcVX01odIPxh8c88RAXVDQb7eJ/SV8w31icrUx6tCOQAAAABJRU5ErkJggg==);
+	background-image: url(data:image/png;base64,R0lGODlhBwAEAIABAEJCQv///yH5BAEAAAEALAAAAAAHAAQAAAIIhA+BGWoNWSgAOw==);
 	background-repeat: no-repeat;
 	display: block;
 	height: 4px;
@@ -41,9 +41,9 @@ div.-cakedev-custom-combo div.-cakedev-combo-list-container {
 	border: 1px solid #ddd;
 	position: absolute;
 	
-	-moz-box-shadow: 0px 5px 5px #ccc;
-	-webkit-box-shadow: 0px 5px 5px #ccc;
 	box-shadow: 0px 5px 5px #ccc;
+	-webkit-box-shadow: 0px 5px 5px #ccc;
+	-moz-box-shadow: 0px 5px 5px #ccc;
 }
 div.-cakedev-custom-combo div.-cakedev-combo-list-container ul {
 	list-style: none;
@@ -51,18 +51,16 @@ div.-cakedev-custom-combo div.-cakedev-combo-list-container ul {
 	padding: 0px;
 }
 div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li {
-	font-size: 16px;
-}
-div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li a {
+	cursor: pointer;
 	color: #333;
 	display: block;
+	font-size: 16px;
 	font-weight: normal;
 	padding: 5px 15px 5px 10px;
 	text-decoration: none;
 }
-div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li a:hover {
+div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li:hover {
 	background-color: #eee;
-	text-decoration: none;
 }
 
 /* Tabs */
@@ -146,15 +144,15 @@ div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
 	-moz-border-radius: 5px;
 
 	opacity: .40;
-	-khtml-opacity: 0.4;
 	-moz-opacity: .40;
+	-khtml-opacity: 0.4;
 	filter: alpha(opacity=40);
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft:hover,
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowright:hover {
 	opacity: .60;
-	-khtml-opacity: 0.6;
 	-moz-opacity: .60;
+	-khtml-opacity: 0.6;
 	filter: alpha(opacity=60);
 }
 div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft {

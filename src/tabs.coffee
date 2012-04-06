@@ -11,17 +11,17 @@ jcakedev.tabs =
   invoke: (action, params) ->
     if action?
       if action is "create"
-        jcakedev.tabs.create.call this, params
+        jcakedev.tabs.create.call @, params
       else if action is "getActiveTab"
-        jcakedev.tabs.getActiveTab.call this
+        jcakedev.tabs.getActiveTab.call @
       else
         throw "'#{action}' is not a valid action for tabs"
     else
-      jcakedev.tabs.create.call this, params
+      jcakedev.tabs.create.call @, params
 
   create: (params) ->
-    this.each ->
-      $tabControl = $ this
+    @each ->
+      $tabControl = $ @
       $tabControl.addClass "-cakedev-tabs" if not $tabControl.hasClass "-cakedev-tabs"
 
       tabControl = new TabControl $tabControl
@@ -60,14 +60,14 @@ jcakedev.tabs =
 
         for el, i in $tabHeaders
           $tabHeaders.eq(i).on "click", ->
-            $currentTabControl = $(this).closest ".-cakedev-tabs"
-            $headersContainer = $(this).closest ".-cakedev-tabHeaders-container"
+            $currentTabControl = $(@).closest ".-cakedev-tabs"
+            $headersContainer = $(@).closest ".-cakedev-tabHeaders-container"
 
             index = 0
             $headers = $headersContainer.find ".-cakedev-tabHeader"
 
             for el, j in $headers
-              if $headers.eq(j).get(0) is $(this).get(0)
+              if $headers.eq(j).get(0) is $(@).get(0)
                 index = j
                 break
 
@@ -82,15 +82,16 @@ jcakedev.tabs =
         $tabControl.children(".-cakedev-tab").not(":eq(0)").hide()
 
         tabControl.currentTab = $tabControl.children(".-cakedev-tab").eq 0
+      true
 
   getActiveTab: ->
-    tabControl = jcakedev.tabs.getCurrentElement.call this
+    tabControl = jcakedev.tabs.getCurrentElement.call @
     if tabControl? then tabControl.currentTab else null
 
   getCurrentElement: ->
     element = null
     for tab in jcakedev.tabs.tabControls
-      if tab.element.get(0) == this.get(0)
+      if tab.element.get(0) == @get(0)
         element = tab
         break
     element
