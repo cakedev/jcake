@@ -8,15 +8,16 @@ jcakedev.combo =
   invoke: (action, params) ->
     if action?
       if action is "create"
-        jcakedev.combo.create.call @, params
+        return jcakedev.combo.create.call @, params
       else if action is "getValue"
-        jcakedev.combo.getValue.call @
+        return jcakedev.combo.getValue.call @
       else if action is "setValue"
         return jcakedev.combo.setValue.call @, params
       else
-        throw "'#{action}' is not a valid action for combo"
+        console.log "'#{action}' is not a valid action for combo"
+        return @
     else
-      jcakedev.combo.create.call @, params
+      return jcakedev.combo.create.call @, params
 
   create: (params) ->
     options = []
@@ -28,7 +29,7 @@ jcakedev.combo =
       delegate = params.delegate
       defaultValue = params.defaultValue
     else
-      throw "No options defined for combo(s) exception"      
+      console.log "No options were defined for combo(s)"      
 
     @each ->
       $combo = $ @

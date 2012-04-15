@@ -11,13 +11,14 @@ jcakedev.tabs =
   invoke: (action, params) ->
     if action?
       if action is "create"
-        jcakedev.tabs.create.call @, params
+        return jcakedev.tabs.create.call @, params
       else if action is "getActiveTab"
-        jcakedev.tabs.getActiveTab.call @
+        return jcakedev.tabs.getActiveTab.call @
       else
-        throw "'#{action}' is not a valid action for tabs"
+        console.log "'#{action}' is not a valid action for tabs"
+        return @
     else
-      jcakedev.tabs.create.call @, params
+      return jcakedev.tabs.create.call @, params
 
   create: (params) ->
     @each ->
