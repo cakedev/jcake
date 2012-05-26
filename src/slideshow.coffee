@@ -13,8 +13,8 @@ cake.slideshow =
 
   invoke: (action, params) ->
     if action?
-      if action is "create"
-        return cake.slideshow.create.call @, params
+      if cake.slideshow[action]?
+        cake.slideshow[action].call @, params
       else
         console.log "'#{action}' is not a valid action for slideshow"
         return @

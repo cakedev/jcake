@@ -7,12 +7,8 @@ cake.combo =
 
   invoke: (action, params) ->
     if action?
-      if action is "create"
-        return cake.combo.create.call @, params
-      else if action is "getValue"
-        return cake.combo.getValue.call @
-      else if action is "setValue"
-        return cake.combo.setValue.call @, params
+      if cake.combo[action]?
+        return cake.combo[action].call @, params
       else
         console.log "'#{action}' is not a valid action for combo"
         return @
@@ -53,7 +49,7 @@ cake.combo =
         "<table style='border-collapse: collapse;'>" +
           "<tr>" +
             "<td class='-cakedev-combo-optionText'>#{selectedOption.text}</td>" +
-            "<td class='-cakedev-combo-arrow'><div></div></td>" +
+            "<td class='-cakedev-combo-arrow'><div class='-cakedev-arrow -cakedev-arrow-down-black'></div></td>" +
           "</tr>" +
         "</table>"
       )

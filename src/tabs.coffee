@@ -10,10 +10,8 @@ cake.tabs =
 
   invoke: (action, params) ->
     if action?
-      if action is "create"
-        return cake.tabs.create.call @, params
-      else if action is "getActiveTab"
-        return cake.tabs.getActiveTab.call @
+      if cake.tabs[action]?
+        cake.tabs[action].call @, params
       else
         console.log "'#{action}' is not a valid action for tabs"
         return @
