@@ -3,7 +3,7 @@ class TabControl
     @tabs = []
     @currentTab = null
     @direction = "top"
-    @bgcolor = "#3c78b5"
+    @bgcolor = null
 
 jcakedev.tabs =
   tabControls: []
@@ -33,7 +33,8 @@ jcakedev.tabs =
         tabControl.bgcolor = params.bgcolor if params.bgcolor?
 
       tabHeaderClass = if tabControl.direction is "bottom" then "-cakedev-tabHeader-bottom" else "-cakedev-tabHeader-top"
-      $tabControl.css "background-color", tabControl.bgcolor
+
+      $tabControl.css "background-color", tabControl.bgcolor if tabControl.bgcolor?
 
       $tabHeadersContainer = $ "<div class='-cakedev-tabHeaders-container'></div>'"
       $tabs = $tabControl.children "div"

@@ -66,6 +66,7 @@ div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li:hover {
 /* Tabs */
 
 div.-cakedev-tabs {
+	background-color: #efefef;
 	padding: 1px 1px 1px 1px;
 }
 div.-cakedev-tabs div.-cakedev-tab {
@@ -80,27 +81,49 @@ div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	color: #aaa;
 	cursor: pointer;
 	display: block;
-	margin: 0px 0px 0px 3px;
-	padding: 5px 8px 5px 8px;
+	margin: 0px 0px 0px 7px;
+	padding: 5px 15px 5px 15px;
+
+	box-shadow: 0px 0px 5px 0px #ccc;
+	-webkit-box-shadow: 0px 0px 5px 0px #ccc;
+	-moz-box-shadow: 0px 0px 5px 0px #ccc;
 }
 div.-cakedev-tabs span.-cakedev-tabHeader-top {
 	border-top: 1px solid #eee;
 	margin-top: 5px;
+
+	border-radius: 3px 3px 0px 0px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
+	-webkit-border-radius: 3px 3px 0px 0px;
 }
 
 div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	border-bottom: 1px solid #eee;
 	margin-bottom: 5px;
+
+	border-radius: 0px 0px 3px 3px;
+	-moz-border-radius-bottomright: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-webkit-border-radius: 0px 0px 3px 3px;
 }
 div.-cakedev-tabs span.-cakedev-tabHeader-top:hover,
 div.-cakedev-tabs span.-cakedev-tabHeader-bottom:hover {
-	border-color: #aaa;
+	border-color: #eee;
 	color: #888;
+
+	box-shadow: 0px 0px 5px 0px #aaa;
+	-webkit-box-shadow: 0px 0px 5px 0px #aaa;
+	-moz-box-shadow: 0px 0px 5px 0px #aaa;
 }
 div.-cakedev-tabs span.-cakedev-selected-tab {
 	background: #fff;
 	border-color: #fff;
 	color: #333;
+
+	box-shadow: 0px 0px 5px 0px #aaa;
+	-webkit-box-shadow: 0px 0px 5px 0px #aaa;
+	-moz-box-shadow: 0px 0px 5px 0px #aaa;
 }
 div.-cakedev-tabs span.-cakedev-selected-tab:hover {
 	border-color: #fff;
