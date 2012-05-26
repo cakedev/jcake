@@ -5,20 +5,20 @@ class TabControl
     @direction = "top"
     @bgcolor = null
 
-jcakedev.tabs =
+cake.tabs =
   tabControls: []
 
   invoke: (action, params) ->
     if action?
       if action is "create"
-        return jcakedev.tabs.create.call @, params
+        return cake.tabs.create.call @, params
       else if action is "getActiveTab"
-        return jcakedev.tabs.getActiveTab.call @
+        return cake.tabs.getActiveTab.call @
       else
         console.log "'#{action}' is not a valid action for tabs"
         return @
     else
-      return jcakedev.tabs.create.call @, params
+      return cake.tabs.create.call @, params
 
   create: (params) ->
     @each ->
@@ -26,7 +26,7 @@ jcakedev.tabs =
       $tabControl.addClass "-cakedev-tabs" if not $tabControl.hasClass "-cakedev-tabs"
 
       tabControl = new TabControl $tabControl
-      jcakedev.tabs.tabControls.push tabControl
+      cake.tabs.tabControls.push tabControl
 
       if params?
         tabControl.direction = params.direction if params.direction?
@@ -87,12 +87,12 @@ jcakedev.tabs =
       true
 
   getActiveTab: ->
-    tabControl = jcakedev.tabs.getCurrentElement.call @
+    tabControl = cake.tabs.getCurrentElement.call @
     if tabControl? then tabControl.currentTab else null
 
   getCurrentElement: ->
     element = null
-    for tab in jcakedev.tabs.tabControls
+    for tab in cake.tabs.tabControls
       if tab.element.get(0) == @get(0)
         element = tab
         break

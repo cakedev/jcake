@@ -2,22 +2,22 @@ class Combo
   constructor: (@element, @options, @delegate) ->
     @selectedIndex = 0
 
-jcakedev.combo =
+cake.combo =
   combos: []
 
   invoke: (action, params) ->
     if action?
       if action is "create"
-        return jcakedev.combo.create.call @, params
+        return cake.combo.create.call @, params
       else if action is "getValue"
-        return jcakedev.combo.getValue.call @
+        return cake.combo.getValue.call @
       else if action is "setValue"
-        return jcakedev.combo.setValue.call @, params
+        return cake.combo.setValue.call @, params
       else
         console.log "'#{action}' is not a valid action for combo"
         return @
     else
-      return jcakedev.combo.create.call @, params
+      return cake.combo.create.call @, params
 
   create: (params) ->
     options = []
@@ -66,7 +66,7 @@ jcakedev.combo =
 
       $combo.find("li").each (index) ->
         $(@).on "click", (event) ->
-          jcakedev.combo.setValue.call $combo, combo.options[index].value
+          cake.combo.setValue.call $combo, combo.options[index].value
 
           if typeof combo.delegate is "function"
             combo.delegate combo.options[index], $combo
@@ -87,11 +87,11 @@ jcakedev.combo =
 
         true
 
-      jcakedev.combo.combos.push combo
+      cake.combo.combos.push combo
       true
 
   setValue: (value) ->
-    combo = jcakedev.combo.getCurrentElement.call @
+    combo = cake.combo.getCurrentElement.call @
     if combo?
       index = 0
       option = null
@@ -112,7 +112,7 @@ jcakedev.combo =
     @
 
   getValue: ->
-    combo = jcakedev.combo.getCurrentElement.call @
+    combo = cake.combo.getCurrentElement.call @
     if combo?
       combo.options[combo.selectedIndex].value
     else
@@ -120,7 +120,7 @@ jcakedev.combo =
 
   getCurrentElement: ->
     currentCombo = null
-    for combo in jcakedev.combo.combos
+    for combo in cake.combo.combos
       if combo.element.get(0) is @get(0)
         currentCombo = combo
 

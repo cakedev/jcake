@@ -8,18 +8,18 @@ class Slideshow
     @rotate = true
     @animating = false
 
-jcakedev.slideshow = 
+cake.slideshow = 
   slideshows: []
 
   invoke: (action, params) ->
     if action?
       if action is "create"
-        return jcakedev.slideshow.create.call @, params
+        return cake.slideshow.create.call @, params
       else
         console.log "'#{action}' is not a valid action for slideshow"
         return @
     else
-      return jcakedev.slideshow.create.call @, params
+      return cake.slideshow.create.call @, params
 
   create: (params) ->
     @each ->
@@ -46,7 +46,7 @@ jcakedev.slideshow =
       $slides = $slideshow.children "div"
       slideshow.slides = $slides
 
-      jcakedev.slideshow.slideshows.push slideshow
+      cake.slideshow.slideshows.push slideshow
 
       $slideshow.addClass "-cakedev-slideshow" if not $slideshow.hasClass "-cakedev-slideshow"
 
@@ -64,8 +64,8 @@ jcakedev.slideshow =
 
         $slide.css "margin-left", width if i > 0
 
-      jcakedev.slideshow.setNavigationControls slideshow, width, height if not disableNavigation
-      jcakedev.slideshow.setAutoNavigation slideshow if slideshow.autoNavigate
+      cake.slideshow.setNavigationControls slideshow, width, height if not disableNavigation
+      cake.slideshow.setAutoNavigation slideshow if slideshow.autoNavigate
 
       true
 
@@ -98,24 +98,24 @@ jcakedev.slideshow =
 
     $arrowleft.on "click", ->
       slideshow.autoNavigate = false
-      jcakedev.slideshow.movePrevious.call slideshow.element
+      cake.slideshow.movePrevious.call slideshow.element
 
     $arrowright.on "click", ->
       slideshow.autoNavigate = false
-      jcakedev.slideshow.moveNext.call slideshow.element
+      cake.slideshow.moveNext.call slideshow.element
 
     true
 
   setAutoNavigation: (slideshow) ->
-    jcakedev.slideshow.autoNavigate slideshow
+    cake.slideshow.autoNavigate slideshow
 
   autoNavigate: (slideshow) ->
     setTimeout(
       ->
         if slideshow.autoNavigate
-          jcakedev.slideshow.moveNext.call(
+          cake.slideshow.moveNext.call(
             slideshow.element,
-            -> jcakedev.slideshow.autoNavigate slideshow
+            -> cake.slideshow.autoNavigate slideshow
           )
       slideshow.delay
     )
@@ -123,7 +123,7 @@ jcakedev.slideshow =
     true
 
   moveNext: (callback, animationSpeed) ->
-    slideshow = jcakedev.slideshow.getCurrentElement.call @
+    slideshow = cake.slideshow.getCurrentElement.call @
 
     if slideshow?
       if slideshow.animating
@@ -135,11 +135,11 @@ jcakedev.slideshow =
         if slideshow.currentIndex is slideshow.slides.length - 1
           if slideshow.rotate
             speed = Math.round(speed / slideshow.slides.length) + 100
-            jcakedev.slideshow.moveToFirst slideshow, speed, callback
+            cake.slideshow.moveToFirst slideshow, speed, callback
         else
           slideshow.animating = true
 
-          jcakedev.slideshow.changeSlide(
+          cake.slideshow.changeSlide(
             slideshow.slides.eq(slideshow.currentIndex),
             slideshow.slides.eq(slideshow.currentIndex + 1),
             speed,
@@ -154,7 +154,7 @@ jcakedev.slideshow =
     true
 
   movePrevious: (callback, animationSpeed) ->
-    slideshow = jcakedev.slideshow.getCurrentElement.call @
+    slideshow = cake.slideshow.getCurrentElement.call @
 
     if slideshow?
       if slideshow.animating
@@ -166,11 +166,11 @@ jcakedev.slideshow =
         if slideshow.currentIndex is 0
           if slideshow.rotate
             speed = Math.round(speed / slideshow.slides.length) + 100
-            jcakedev.slideshow.moveToLast slideshow, speed, callback
+            cake.slideshow.moveToLast slideshow, speed, callback
         else
           slideshow.animating = true
 
-          jcakedev.slideshow.changeSlide(
+          cake.slideshow.changeSlide(
             slideshow.slides.eq(slideshow.currentIndex),
             slideshow.slides.eq(slideshow.currentIndex - 1),
             speed,
@@ -186,9 +186,9 @@ jcakedev.slideshow =
 
   moveToFirst: (slideshow, slideAnimationSpeed, callback) ->
     if slideshow.currentIndex > 0
-      jcakedev.slideshow.movePrevious.call(
+      cake.slideshow.movePrevious.call(
         slideshow.element,
-        -> jcakedev.slideshow.moveToFirst slideshow, slideAnimationSpeed, callback
+        -> cake.slideshow.moveToFirst slideshow, slideAnimationSpeed, callback
         slideAnimationSpeed
       )
     else
@@ -199,9 +199,9 @@ jcakedev.slideshow =
 
   moveToLast: (slideshow, slideAnimationSpeed, callback) ->
     if slideshow.currentIndex < slideshow.slides.length - 1
-      jcakedev.slideshow.moveNext.call(
+      cake.slideshow.moveNext.call(
         slideshow.element,
-        -> jcakedev.slideshow.moveToLast slideshow, slideAnimationSpeed, callback
+        -> cake.slideshow.moveToLast slideshow, slideAnimationSpeed, callback
         slideAnimationSpeed
       )
     else
@@ -226,7 +226,7 @@ jcakedev.slideshow =
 
   getCurrentElement: ->
     currentSlideshow = null
-    for slideshow in jcakedev.slideshow.slideshows
+    for slideshow in cake.slideshow.slideshows
       if slideshow.element.get(0) is @get(0)
         currentSlideshow = slideshow
 

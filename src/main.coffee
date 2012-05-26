@@ -1,10 +1,10 @@
-jcakedev =
+cake =
   _init: ($) ->
-    $.fn.jcakedev = (plugin, action, params) ->
+    $.fn.cake = (plugin, action, params) ->
       if @length
         if plugin?
-          if jcakedev[plugin]?
-            jcakedev[plugin].invoke.call @, action, params
+          if cake[plugin]?
+            cake[plugin].invoke.call @, action, params
           else
             console.log "plugin definition not found for '#{plugin}'"
         else
@@ -12,6 +12,6 @@ jcakedev =
     null
 
 if jQuery?
-  jcakedev._init jQuery
+  cake._init jQuery
 else
   throw "jQuery not found exception"
