@@ -14,4 +14,4 @@ cake =
 if jQuery?
   cake._init jQuery
 else
-  throw "jQuery not found exception"
+  console.log "jQuery not found"
