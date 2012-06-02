@@ -1,3 +1,8 @@
+###
+jCaKeDev 1.0
+cakedevp.github.com/jcakedev
+###
+
 cake =
   _init: ($) ->
     $.fn.cake = (plugin, action, params) ->
