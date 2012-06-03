@@ -2,8 +2,6 @@ class Tooltip
   constructor: (@element, @text, @direction) ->
 
 cake.tooltip =
-  tooltips: []
-
   defaultDirection: "bottom"
   horizontalMargin: 10
   verticalMargin: 6
@@ -19,14 +17,17 @@ cake.tooltip =
       return cake.tooltip.create.call @, params
 
   create: (params) ->
-    text = if params.text? then params.text else ""
-    direction = if params.direction? then params.direction else @.defaultDirection
+    text = ""
+    direction = cake.tooltip.defaultDirection
+
+    if params?
+      text = params.text or text
+      direction = params.direction or direction
 
     $element = $ "<div class='-cakedev-tooltip'><p></p><span class='-cakedev-arrow'></span></div>"
     $("body").append $element
 
     tooltip = new Tooltip $element, text, direction
-    cake.tooltip.tooltips.push tooltip
 
     @.each ->
       $(@).on "mouseenter", ->
