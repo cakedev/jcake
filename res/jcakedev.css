@@ -37,6 +37,10 @@
 	background-position: -7px -18px;
 }
 
+.-cakedev-dummy {
+	visibility: hidden;
+}
+
 /* Combo */
 
 div.-cakedev-custom-combo {
@@ -271,4 +275,11 @@ div.-cakedev-tooltip .-cakedev-arrow-left-black {
 	margin-left: -4px;
 	margin-top: -3px;
 	top: 50%;
+}
+
+/* Attachable */
+
+.-cakedev-attachable {
+	margin: 0px;
+	position: fixed;
 }
