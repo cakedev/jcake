@@ -33,7 +33,7 @@ cake.tooltip =
       $(@).on "mouseenter", ->
         cake.tooltip.setTooltip $(@), tooltip
 
-      $(@).on "mouseout", ->
+      $(@).on "mouseleave", ->
         $element.hide()
 
   setTooltip: ($target, tooltip) ->
