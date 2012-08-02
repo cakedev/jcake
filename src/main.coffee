@@ -1,5 +1,5 @@
 ###
-jCaKeDev 1.1
+jCaKeDev 1.2
 cakedevp.github.com/jcakedev
 ###
 
