@@ -7,6 +7,7 @@ class Slideshow
     @delay = 2000
     @rotate = true
     @animating = false
+    @navigationMargin = 20
 
 cake.slideshow = 
   slideshows: []
@@ -28,9 +29,11 @@ cake.slideshow =
       slideshow = new Slideshow $slideshow
 
       disableNavigation = false
+      fixedHeight = false
 
       if params?
         if params.height?
+          fixedHeight = true
           $slideshow.css "height", if isNaN params.height then params.height else "#{params.height}px"
         if params.disableNavigation?
           disableNavigation = params.disableNavigation
@@ -42,6 +45,8 @@ cake.slideshow =
           slideshow.autoNavigate = params.autoNavigate
         if params.delay?
           slideshow.delay = params.delay
+        if params.navigationMargin?
+          slideshow.navigationMargin = params.navigationMargin
 
       $slides = $slideshow.children "div"
       slideshow.slides = $slides
@@ -50,8 +55,16 @@ cake.slideshow =
 
       $slideshow.addClass "-cakedev-slideshow" if not $slideshow.hasClass "-cakedev-slideshow"
 
-      width = $slideshow.width()
       height = $slideshow.height()
+
+      if not fixedHeight
+        maxHeight = 0
+
+        for el, i in $slides
+          maxHeight = $slides.eq(i).height() if $slides.eq(i).height() > maxHeight
+
+        height = maxHeight
+        $slideshow.css "height", "#{height}px"
 
       for el, i in $slides
         $slide = $slides.eq i
@@ -59,27 +72,30 @@ cake.slideshow =
         $slide.addClass "-cakedev-slideshow-slide" if not $slide.hasClass "-cakedev-slideshow-slide"
 
         $slide.css "height", "#{height}px"
-        $slide.css "width", "#{width}px"
+        $slide.css "width", "100%"
         $slide.css "top", "-#{i * height}px"
 
-        $slide.css "margin-left", width if i > 0
+      $slides.not(":eq(0)").css "margin-left", "#{$slideshow.width()}px"
 
-      cake.slideshow.setNavigationControls slideshow, width, height if not disableNavigation
+      cake.slideshow.setNavigationControls slideshow if not disableNavigation
       cake.slideshow.setAutoNavigation slideshow if slideshow.autoNavigate
 
       true
 
-  setNavigationControls: (slideshow, width, height) ->
+  setNavigationControls: (slideshow) ->
     $slideshow = slideshow.element
     $slides = slideshow.slides
 
-    $arrowleft = $ "<div class='-cakedev-slideshow-arrowleft'></div>"
-    $arrowright = $ "<div class='-cakedev-slideshow-arrowright'></div>"
+    width = $slideshow.width()
+    height = $slideshow.height();
+
+    $arrowleft = $ "<div class='-cakedev-slideshow-arrowleft' />"
+    $arrowright = $ "<div class='-cakedev-slideshow-arrowright' />"
 
     $slideshow.append $arrowleft
     $slideshow.append $arrowright
 
-    $arrowleft.css "left", "10px"
+    $arrowleft.css "left", "#{slideshow.navigationMargin}px"
     $arrowleft.css "top",
       "-" + (
         height * $slides.length -
@@ -87,7 +103,7 @@ cake.slideshow =
         parseInt($arrowleft.height() / 2, 10)
       ) + "px"
 
-    $arrowright.css "left", (width - $arrowright.width() - 10) + "px"
+    $arrowright.css "left", (width - $arrowright.width() - slideshow.navigationMargin) + "px"
     $arrowright.css "top",
       "-" + (
         height * $slides.length -
