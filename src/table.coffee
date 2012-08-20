@@ -1,21 +1,27 @@
-class Table
-  constructor: (@element, @fields, @fieldNames, @data, @maxRecords, @selectable, @editable, @erasable) ->
-    @currentPage = 0
+jcakedev.plugins.table =
+  pluginManager: null
 
-cake.table =
-  tables: []
+  init: (pm) ->
+    @pluginManager = pm
+    me = @
 
-  invoke: (action, params) ->
-    if action?
-      if cake.table[action]?
-        return cake.table[action].call @, params
+    $.fn.cakeTable = (args...) ->
+      if typeof args[0] is "string"
+        action = args[0]
+
+        switch action
+          when "getSelected"
+            console.log "Under development..."
+          else
+            console.log "'#{action}' is not a valid action for cakeTable"
       else
-        console.log "'#{action}' is not a valid action for table"
-        return @
-    else
-      return cake.table.create.call @, params
+        me.create @, if typeof args[0] is "object" then args[0] else {}
+      
+      return @
 
-  create: (params) ->
+  create: ($elements, params) ->
+    me = @
+
     fields = if params.fields? then params.fields else []
     fieldNames = if params.fieldNames? then params.fieldNames else {}
     data = if params.data? then params.data else []
@@ -24,23 +30,55 @@ cake.table =
     editable = if params.editable? then params.editable else no
     erasable = if params.erasable? then params.erasable else no
 
-    @each ->
-      $table = $ @
-      $table.addClass "-cakedev-table"
+    $elements.each ->
+      table = new Table me.pluginManager.newID(), $(@), fields, fieldNames, data, maxRecords, selectable, editable, erasable
+      me.pluginManager.addElement table
 
-      table = new Table $table, fields, fieldNames, data, maxRecords, selectable, editable, erasable
+class Table
+  constructor: (@id, @element, @fields, @fieldNames, @data, @maxRecords, @selectable, @editable, @erasable) ->
+    @element.data "jcakedevId", @id
+    @currentPage = 0
 
-      cake.table.tables.push table
-      
-      $wrapper = $ "<div class='-cakedev-table-wrapper' />"
-      $records = $ "<table class='-cakedev-table-records' />"
-      $pages = $ "<div class='-cakedev-table-pages' />"
+    @element.addClass "-cakedev-table"
 
-      $wrapper.append $records
-      $table.append $wrapper
-      $table.append $pages
+    $wrapper = $ "<div class='-cakedev-table-wrapper' />"
+    $records = $ "<table class='-cakedev-table-records' />"
+    $pages = $ "<div class='-cakedev-table-pages' />"
 
-      cake.table.setRecords.call $table
+    $wrapper.append $records
+    @element.append $wrapper
+    @element.append $pages
+
+    @setRecords()
+
+  setRecords: ->
+    $records = @element.find ".-cakedev-table-records"
+    $records.empty()
+
+    @setHeaders()
+
+    start = @currentPage * @maxRecords
+    end = start + @maxRecords
+
+    for i in [start...end]
+      if i >= @data.length
+        break
+
+      $record = $ "<tr />";
+      $record.append "<td class='-cakedev-table-recordActions' />"
+
+      for field in @fields
+        value = if @data[i][field]? then @data[i][field] else ""
+        $record.append "<td>#{value}</td>"
+
+      $records.append $record
+
+    $records.find("tr:last td").css "border", "none"
+
+    @setPages()
+    @setSelectable() if @selectable
+    @setEditable() if @editable
+    @setErasable() if @erasable
 
   setHeaders: ->
     $headers = $ "<tr />"
@@ -52,37 +90,6 @@ cake.table =
 
     @element.find(".-cakedev-table-records").append $headers
 
-  setRecords: ->
-    table = cake.table.getCurrentElement.call @
-
-    $records = table.element.find ".-cakedev-table-records"
-    $records.empty()
-
-    cake.table.setHeaders.call table
-
-    start = table.currentPage * table.maxRecords
-    end = start + table.maxRecords
-
-    for i in [start...end]
-      if i >= table.data.length
-        break
-
-      $record = $ "<tr />";
-      $record.append "<td class='-cakedev-table-recordActions' />"
-
-      for field in table.fields
-        value = if table.data[i][field]? then table.data[i][field] else ""
-        $record.append "<td>#{value}</td>"
-
-      $records.append $record
-
-    $records.find("tr:last td").css "border", "none"
-
-    cake.table.setPages.call table
-    cake.table.setSelectable.call table if table.selectable
-    cake.table.setEditable.call table if table.editable
-    cake.table.setErasable.call table if table.erasable
-
   setPages: ->
     me = @
     $pages = @element.children ".-cakedev-table-pages"
@@ -92,22 +99,50 @@ cake.table =
 
     for i in [0...pagesCount]
       $page = $ "<a class='-cakedev-table-page' href='#'>#{i + 1}</a>"
+      $page.data "pageIndex", i
 
       $page.on "click", ->
-        $currentPage = $ @
-        $siblings = $currentPage.parent().children ".-cakedev-table-page"
-
-        for j in [0...$siblings.length]
-          if $siblings.eq(j).get(0) is $currentPage.get(0)
-            cake.table.setPage.call me, j
-            break;
-
+        me.setPage $(@).data("pageIndex")
         no
       
       $pages.append $page
 
     $pages.children(".-cakedev-table-page").eq(@currentPage).addClass "-cakedev-table-currentPage"
-    cake.table.setNavigationControls.call @
+    @setNavigationControls()
+
+  setNavigationControls: ->
+    me = @
+    $pages = @element.children ".-cakedev-table-pages"
+
+    $previous = $ "<a href='#'>&laquo; Anterior</a>"
+    $next = $ "<a href='#'>Siguiente &raquo;</a>"
+    $beginning = $ "<a href='#'>Ir al inicio</a>"
+    $end = $ "<a href='#'>Ir al final</a>"
+
+    lastPage = Math.ceil(@data.length / @maxRecords) - 1
+
+    $previous.on "click", ->
+      me.setPage(me.currentPage - 1) if me.currentPage > 0
+      no
+    $beginning.on "click", ->
+      me.setPage 0
+      no
+    $next.on "click", ->
+      me.setPage(me.currentPage + 1) if me.currentPage < lastPage
+      no
+    $end.on "click", ->
+      me.setPage lastPage
+      no
+
+    $pages
+      .prepend($previous)
+      .prepend($beginning)
+      .append($next)
+      .append($end)
+
+  setPage: (index) ->
+    @currentPage = index
+    @setRecords()
 
   setSelectable: ->
     no
@@ -123,45 +158,3 @@ cake.table =
     
     for i in [0...$actions.length]
       $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-trash-icon' />"
-
-  setNavigationControls: ->
-    me = @
-    $pages = @element.children ".-cakedev-table-pages"
-
-    $previous = $ "<a href='#'>&laquo; Anterior</a>"
-    $next = $ "<a href='#'>Siguiente &raquo;</a>"
-    $beginning = $ "<a href='#'>Ir al inicio</a>"
-    $end = $ "<a href='#'>Ir al final</a>"
-
-    lastPage = Math.ceil(@data.length / @maxRecords) - 1
-
-    $previous.on "click", ->
-      cake.table.setPage.call me, me.currentPage - 1 if me.currentPage > 0
-      no
-    $beginning.on "click", ->
-      cake.table.setPage.call me, 0
-      no
-    $next.on "click", ->
-      cake.table.setPage.call me, me.currentPage + 1 if me.currentPage < lastPage
-      no
-    $end.on "click", ->
-      cake.table.setPage.call me, lastPage
-      no
-
-    $pages
-      .prepend($previous)
-      .prepend($beginning)
-      .append($next)
-      .append($end)
-
-  setPage: (index) ->
-    @currentPage = index
-    cake.table.setRecords.call @element
-
-  getCurrentElement: ->
-    currentTable = null
-    for table in cake.table.tables
-      if table.element.get(0) is @get(0)
-        currentTable = table
-
-    currentTable

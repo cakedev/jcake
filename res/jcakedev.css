@@ -58,64 +58,78 @@
 
 /* Combo */
 
-div.-cakedev-custom-combo {
+div.-cakedev-combo {
 	font-family: Helvetica, Tahoma, Arial;
 	font-size: 20px;
+	float: left;
 	vertical-align: middle;
 }
-div.-cakedev-custom-combo table:hover .-cakedev-combo-optionText,
-div.-cakedev-custom-combo table:hover .-cakedev-combo-arrow {
+div.-cakedev-combo:hover table .-cakedev-combo-optionText,
+div.-cakedev-combo:hover table .-cakedev-combo-arrow {
 	background-color: #3c78b5;
 	color: #fff;
 }
-div.-cakedev-custom-combo table:hover .-cakedev-combo-arrow div {
+div.-cakedev-combo table:hover .-cakedev-combo-arrow div {
 	background-position: -7px -14px;
 }
-div.-cakedev-custom-combo table {
+div.-cakedev-combo table {
+	border-collapse: collapse;
 	cursor: pointer;
 	margin: 0px;
 	padding: 0px;
 }
-
-div.-cakedev-custom-combo .-cakedev-combo-optionText {
+div.-cakedev-combo table td {
+	border-collapse: collapse;
+	margin: 0px;
+}
+div.-cakedev-combo .-cakedev-combo-optionText {
 	color: #3c78b5;
 	font-size: 20px;
 	font-weight: bold;
 	height: 27px;
 	padding: 1px 8px 0px 5px;
 	vertical-align: middle;
+	white-space: nowrap;
 }
-div.-cakedev-custom-combo .-cakedev-combo-arrow {
+div.-cakedev-combo .-cakedev-combo-arrow {
 	padding: 0px 10px 0px 0px;
 }
-div.-cakedev-custom-combo .-cakedev-combo-arrow div {
+div.-cakedev-combo .-cakedev-combo-arrow div {
 	display: block;
 }
-div.-cakedev-custom-combo div.-cakedev-combo-list-container {
+div.-cakedev-combo div.-cakedev-combo-list-container {
 	background: #fff;
 	border: 1px solid #ddd;
+	display: none;
+	overflow: visible;
+	opacity: 0;
 	position: absolute;
 	
 	box-shadow: 0px 5px 5px #ccc;
 	-webkit-box-shadow: 0px 5px 5px #ccc;
 	-moz-box-shadow: 0px 5px 5px #ccc;
 }
-div.-cakedev-custom-combo div.-cakedev-combo-list-container ul {
+div.-cakedev-combo div.-cakedev-combo-list-container ul {
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 }
-div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li {
+div.-cakedev-combo div.-cakedev-combo-list-container ul li {
 	cursor: pointer;
 	color: #333;
 	display: block;
 	font-size: 16px;
 	font-weight: normal;
-	padding: 5px 15px 5px 10px;
+	padding: 5px 20px 5px 20px;
 	text-decoration: none;
+	white-space: nowrap;
 }
-div.-cakedev-custom-combo div.-cakedev-combo-list-container ul li:hover {
+div.-cakedev-combo div.-cakedev-combo-list-container ul li:hover {
 	background-color: #eee;
+}
+div.-cakedev-combo div.-cakedev-combo-list-container ul li.-cakedev-combo-selectedOption {
+	background-color: #eee;
+	cursor: default;
 }
 
 /* Tabs */
@@ -363,7 +377,7 @@ div.-cakedev-tooltip .-cakedev-arrow-left-black {
 .-cakedev-table .-cakedev-table-pages a {
 	color: #05f;
 	font-size: 13px;
-	padding: 3px 8px 3px 8px;
+	padding: 2px 8px 3px 8px;
 	margin: 0px 1px 0px 1px;
 	text-decoration: none;
 }
@@ -375,13 +389,13 @@ div.-cakedev-tooltip .-cakedev-arrow-left-black {
 	text-decoration: none;
 }
 .-cakedev-table .-cakedev-table-pages .-cakedev-table-currentPage {
-	background-color: #ccc;
+	background-color: #5a5a5a;
 	color: #eee;
 	cursor: default;
 
 	background: -moz-linear-gradient(#5a5a5a,#777);
 	background: -webkit-linear-gradient(#5a5a5a,#777);
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#5a5a5a',endColorstr='#777')";
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#5a5a5a',endColorstr='#777777')";
 
 	-webkit-border-radius: 15px;
 	-moz-border-radius: 15px;
