@@ -58,31 +58,32 @@
 
 /* Combo */
 
-div.-cakedev-combo {
+.-cakedev-combo {
 	font-family: Helvetica, Tahoma, Arial;
 	font-size: 20px;
 	float: left;
 	vertical-align: middle;
 }
-div.-cakedev-combo:hover table .-cakedev-combo-optionText,
-div.-cakedev-combo:hover table .-cakedev-combo-arrow {
-	background-color: #3c78b5;
-	color: #fff;
-}
-div.-cakedev-combo table:hover .-cakedev-combo-arrow div {
-	background-position: -7px -14px;
-}
-div.-cakedev-combo table {
+.-cakedev-combo .-cakedev-combo-element {
 	border-collapse: collapse;
 	cursor: pointer;
 	margin: 0px;
 	padding: 0px;
 }
-div.-cakedev-combo table td {
+.-cakedev-combo .-cakedev-combo-element td {
 	border-collapse: collapse;
 	margin: 0px;
 }
-div.-cakedev-combo .-cakedev-combo-optionText {
+.-cakedev-combo .-cakedev-combo-focused {
+	background-color: #3c78b5;
+}
+.-cakedev-combo .-cakedev-combo-focused td {
+	color: #fff;
+}
+.-cakedev-combo .-cakedev-combo-focused .-cakedev-arrow {
+	background-position: -7px -14px;
+}
+.-cakedev-combo .-cakedev-combo-optionText {
 	color: #3c78b5;
 	font-size: 20px;
 	font-weight: bold;
@@ -91,59 +92,60 @@ div.-cakedev-combo .-cakedev-combo-optionText {
 	vertical-align: middle;
 	white-space: nowrap;
 }
-div.-cakedev-combo .-cakedev-combo-arrow {
+.-cakedev-combo .-cakedev-combo-arrow {
 	padding: 0px 10px 0px 0px;
 }
-div.-cakedev-combo .-cakedev-combo-arrow div {
+.-cakedev-combo .-cakedev-arrow {
 	display: block;
 }
-div.-cakedev-combo div.-cakedev-combo-list-container {
+.-cakedev-combo div.-cakedev-combo-list-container {
 	background: #fff;
 	border: 1px solid #ddd;
 	display: none;
-	overflow: visible;
+	max-height: 200px;
+	overflow: auto;
 	opacity: 0;
 	position: absolute;
 	
-	box-shadow: 0px 5px 5px #ccc;
-	-webkit-box-shadow: 0px 5px 5px #ccc;
-	-moz-box-shadow: 0px 5px 5px #ccc;
+	box-shadow: 0px 3px 5px #ddd;
+	-webkit-box-shadow: 0px 3px 5px #ddd;
+	-moz-box-shadow: 0px 3px 5px #ddd;
 }
-div.-cakedev-combo div.-cakedev-combo-list-container ul {
+.-cakedev-combo div.-cakedev-combo-list-container ul {
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 }
-div.-cakedev-combo div.-cakedev-combo-list-container ul li {
+.-cakedev-combo div.-cakedev-combo-list-container ul li {
 	cursor: pointer;
 	color: #333;
 	display: block;
 	font-size: 16px;
 	font-weight: normal;
-	padding: 5px 20px 5px 20px;
+	padding: 5px 35px 5px 20px;
 	text-decoration: none;
 	white-space: nowrap;
 }
-div.-cakedev-combo div.-cakedev-combo-list-container ul li:hover {
+.-cakedev-combo div.-cakedev-combo-list-container ul li:hover {
 	background-color: #eee;
 }
-div.-cakedev-combo div.-cakedev-combo-list-container ul li.-cakedev-combo-selectedOption {
+.-cakedev-combo div.-cakedev-combo-list-container ul li.-cakedev-combo-selectedOption {
 	background-color: #eee;
 	cursor: default;
 }
 
 /* Tabs */
 
-div.-cakedev-tabs {
+.-cakedev-tabs {
 	background-color: #efefef;
 	padding: 1px 1px 1px 1px;
 }
-div.-cakedev-tabs div.-cakedev-tab {
+.-cakedev-tabs div.-cakedev-tab {
 	background: #fff;
 	padding: 10px;
 }
-div.-cakedev-tabs span.-cakedev-tabHeader-top,
-div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
+.-cakedev-tabs span.-cakedev-tabHeader-top,
+.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	background: #eee;
 	border-left: 1px solid #eee;
 	border-right: 1px solid #eee;
@@ -157,7 +159,7 @@ div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	-webkit-box-shadow: 0px 0px 5px 0px #ccc;
 	-moz-box-shadow: 0px 0px 5px 0px #ccc;
 }
-div.-cakedev-tabs span.-cakedev-tabHeader-top {
+.-cakedev-tabs span.-cakedev-tabHeader-top {
 	border-top: 1px solid #eee;
 	margin-top: 5px;
 
@@ -166,8 +168,7 @@ div.-cakedev-tabs span.-cakedev-tabHeader-top {
 	-moz-border-radius-topright: 3px;
 	-webkit-border-radius: 3px 3px 0px 0px;
 }
-
-div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
+.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	border-bottom: 1px solid #eee;
 	margin-bottom: 5px;
 
@@ -176,8 +177,8 @@ div.-cakedev-tabs span.-cakedev-tabHeader-bottom {
 	-moz-border-radius-bottomleft: 3px;
 	-webkit-border-radius: 0px 0px 3px 3px;
 }
-div.-cakedev-tabs span.-cakedev-tabHeader-top:hover,
-div.-cakedev-tabs span.-cakedev-tabHeader-bottom:hover {
+.-cakedev-tabs span.-cakedev-tabHeader-top:hover,
+.-cakedev-tabs span.-cakedev-tabHeader-bottom:hover {
 	border-color: #eee;
 	color: #888;
 
@@ -185,7 +186,7 @@ div.-cakedev-tabs span.-cakedev-tabHeader-bottom:hover {
 	-webkit-box-shadow: 0px 0px 5px 0px #aaa;
 	-moz-box-shadow: 0px 0px 5px 0px #aaa;
 }
-div.-cakedev-tabs span.-cakedev-selected-tab {
+.-cakedev-tabs span.-cakedev-selected-tab {
 	background: #fff;
 	border-color: #fff;
 	color: #333;
@@ -194,34 +195,34 @@ div.-cakedev-tabs span.-cakedev-selected-tab {
 	-webkit-box-shadow: 0px 0px 5px 0px #aaa;
 	-moz-box-shadow: 0px 0px 5px 0px #aaa;
 }
-div.-cakedev-tabs span.-cakedev-selected-tab:hover {
+.-cakedev-tabs span.-cakedev-selected-tab:hover {
 	border-color: #fff;
 	color: #333;
 }
-div.-cakedev-tabs .-cakedev-tabHeaders-container table {
+.-cakedev-tabs .-cakedev-tabHeaders-container table {
 	border-collapse: collapse;
 }
-div.-cakedev-tabs .-cakedev-tabHeaders-container table tr td {
+.-cakedev-tabs .-cakedev-tabHeaders-container table tr td {
 	border-collapse: collapse;
 	padding: 0px;
 }
 
 /* Slideshow */
 
-div.-cakedev-slideshow {
+.-cakedev-slideshow {
 	display: block;
 	overflow: hidden;
 }
-div.-cakedev-slideshow:hover div.-cakedev-slideshow-arrowleft,
-div.-cakedev-slideshow:hover div.-cakedev-slideshow-arrowright {
+.-cakedev-slideshow:hover div.-cakedev-slideshow-arrowleft,
+.-cakedev-slideshow:hover div.-cakedev-slideshow-arrowright {
 	visibility: visible;
 }
-div.-cakedev-slideshow div.-cakedev-slideshow-slide {
+.-cakedev-slideshow div.-cakedev-slideshow-slide {
 	overflow: hidden;
 	position: relative;
 }
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft,
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
+.-cakedev-slideshow div.-cakedev-slideshow-arrowleft,
+.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
 	background-position: center center;
 	background-repeat: no-repeat;
 	cursor: pointer;
@@ -240,24 +241,24 @@ div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
 	-khtml-opacity: 0.4;
 	filter: alpha(opacity=40);
 }
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft:hover,
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowright:hover {
+.-cakedev-slideshow div.-cakedev-slideshow-arrowleft:hover,
+.-cakedev-slideshow div.-cakedev-slideshow-arrowright:hover {
 	opacity: .60;
 	-moz-opacity: .60;
 	-khtml-opacity: 0.6;
 	filter: alpha(opacity=60);
 }
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowleft {
+.-cakedev-slideshow div.-cakedev-slideshow-arrowleft {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAABdCAYAAAAxOO9bAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK8AAACvABQqw0mAAAAjtJREFUeNrtm12RgzAUhZGwEiqhEioBCUioBCRUAhKQEAnsY99YBzhgA0Nn2G0pgZxzkkzpzH1tvvn4O7lJsr7vs9QqO6BV0Ozf9/2nsNXa6j2qtnUe/o8KbQf5smU8YefV2brQoCfgBgj8qJYJXROAx6JAD5eQBTzcIizohghdwqGnNwXN8vCsMKBbIvQN/sojWx7qBIWeXnFMy9VjLCR0qbAMg54sdwrLSGiZZQi0wLL5PyYC+ka2fIFCD5eNDGxejesLXakte0GHsuwLXZOhCyg0OXqOQf/d+HuhTSjLu6BDW94LHdTyZmj7hzkZuHPh2ArdkqFLKLQg4I9TKTR0FJadoWOy7AQtiJ6bLLtCswP+U8j3ghZZrrZ+kdego7P8FnqKntFZXoOuYrS8CC0I+GNnf++MaQlaYfkCgxZZNj4dgFfQJmbLT9CCgO9t+RW0wnIOgxZZbjPAbw7dCKALGLQgesIsz6HbVCzPoTsBdImGVqS5TbMT1wdRcYtc0dBFcq88oe0CDZ2E7VCBqUBDKz7nDRQ6hXi6BB11RH03sa1jtb3WQojS9lqzpkqqWSO0jW2LJdmAjLUJ6dpUj8q2K7TC9g0KPYFfk1soSnJJLqYFoz3LzMFt74HOQ08SPmPrRLKbVELb9oE+h7L9WVvcQm5zQ2zblNtGQLNXdg0cWhRdzwzo9DZ9i2yfGNAy2599ZEQUXSsWdHrHoAQLqeVxtE/1eT+Oqy6Ao/vcufIItq/1v0ewjxP6ovoFRcbK1Dq5rC4AAAAASUVORK5CYII=);
 }
 
-div.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
+.-cakedev-slideshow div.-cakedev-slideshow-arrowright {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAABdCAYAAAAxOO9bAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK8AAACvABQqw0mAAAAhxJREFUeNrt29FxgkAUhWFKsARKsARKsIQtwRIowRIoYUvYEsxj3kgHdEDQWR0TExE453DvKDP32W/+cZSF3aLv+8LbFG+0Cn26Pj6/tsPEYfoF0w4TCvJ1Rg8fVA3TLQTfThpmw0a3QPBljiz4Bd2TJjLRHRFesdA1EX1koTfk2gGOzj95ByK6ZaFLIhpa+4rO8IZZG/UT+BvNrl3D0YLaHaL2X2jzte/QGZ4s1/4PXZFrH+BoQe3TlAw0u3YDR1uuPYYOZHSEozO8JcMrBppdO8HRFms/izZV+yl0hndk+I6BrsnoloHeCGoHKNpS7aloE7UnoUW1R29d56DZi4TRhcJktGBJNlp7LnrV2rPQwtolGq2o3UDRGR4F8BKNrtaovQgtWpLd1UagFbUTFC2sXaHRO2VtCFq0JLvWRqKDAH2EooW1AxqtqN2i0bUA3SG/04pVzfnuD4neK74aHn/yAvLPJagqI9GyyqgbpuDuhilvRumVT1U9LAISeuWS1JWXLmwVlSN6NZ7WWNRaf1jTeHss9vAd42s8gFz74eOch+qrV56DPqxd2eKLov1rv5Kz9DpuCtpMZUsv9HdQtMutE+42qVis/AyaXXn73uLmbjOh5cqP0OwNsiUUnY9D+dqK7G7Tt8vt9R4q/0C7PDLCPi5SAC+/x6C8HjhzebTP5N/1GNrlcVX01odIPxh8c88RAXVDQb7eJ/SV8w31icrUx6tCOQAAAABJRU5ErkJggg==);
 }
 
 /* Tooltip */
 
-div.-cakedev-tooltip {
+.-cakedev-tooltip {
 	background-color: #000;
 	color: #fff;
 	display: none;
@@ -275,31 +276,31 @@ div.-cakedev-tooltip {
 	-khtml-opacity: 0.8;
 	filter: alpha(opacity=80);
 }
-div.-cakedev-tooltip p {
+.-cakedev-tooltip p {
 	margin: 0px;
 	padding: 0px;
 }
-div.-cakedev-tooltip .-cakedev-arrow {
+.-cakedev-tooltip .-cakedev-arrow {
 	position: absolute;
 	z-index: 999;
 }
-div.-cakedev-tooltip .-cakedev-arrow-up-black {
+.-cakedev-tooltip .-cakedev-arrow-up-black {
 	left: 50%;
 	margin-left: -3px;
 	margin-top: -4px;
 	top: 0px;
 }
-div.-cakedev-tooltip .-cakedev-arrow-right-black {
+.-cakedev-tooltip .-cakedev-arrow-right-black {
 	left: 100%;
 	margin-top: -3px;
 	top: 50%;
 }
-div.-cakedev-tooltip .-cakedev-arrow-down-black {
+.-cakedev-tooltip .-cakedev-arrow-down-black {
 	left: 50%;
 	margin-left: -3px;
 	top: 100%;
 }
-div.-cakedev-tooltip .-cakedev-arrow-left-black {
+.-cakedev-tooltip .-cakedev-arrow-left-black {
 	left: 0px;
 	margin-left: -4px;
 	margin-top: -3px;
@@ -377,7 +378,7 @@ div.-cakedev-tooltip .-cakedev-arrow-left-black {
 .-cakedev-table .-cakedev-table-pages a {
 	color: #05f;
 	font-size: 13px;
-	padding: 2px 8px 3px 8px;
+	padding: 3px 8px 3px 8px;
 	margin: 0px 1px 0px 1px;
 	text-decoration: none;
 }

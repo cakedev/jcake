@@ -54,38 +54,46 @@ class Combo
 
     @element.addClass "-cakedev-combo"
 
-    @element.append(
-      "<table>" +
-        "<tr>" +
-          "<td class='-cakedev-combo-optionText'></td>" +
-          "<td class='-cakedev-combo-arrow'><div class='-cakedev-arrow -cakedev-arrow-down-black'></div></td>" +
-        "</tr>" +
-      "</table>"
+    $comboElement = $ "<table class='-cakedev-combo-element' />"
+    $comboElement.append(
+      "<tr>" +
+        "<td class='-cakedev-combo-optionText'></td>" +
+        "<td class='-cakedev-combo-arrow'><span class='-cakedev-arrow -cakedev-arrow-down-black'></span></td>" +
+      "</tr>"
     )
+
+    @element.append $comboElement
 
     @setOptions()
     @setCurrentOption()
 
     me = @
 
-    @element.on "mouseenter", ->
-      me.showList(yes)
+    $comboElement.on "mouseenter", ->
+      me.showList yes
+      me.setFocus yes
 
-    @element.on "mouseleave", ->
-      me.hideList(yes)
+    $comboElement.on "mouseleave", (event) ->
+      $target = if event.toElement? then $(event.toElement) else $(event.relatedTarget)
+
+      if (not $target.hasClass("-cakedev-combo-list-container") and not $target.closest(".-cakedev-combo-list-container").length)
+        me.hideList yes
+        me.setFocus no
+
+      yes
 
   showList: (animate) ->
     $el = @element.children(".-cakedev-combo-list-container")
     $el.stop().show()
     if animate
-      $el.stop().animate { opacity: 1.0 }, 200
+      $el.stop().animate { opacity: 1.0 }, 100
     else
       $el.css "opacity", 1.0
 
   hideList: (animate) ->
     $el = @element.children(".-cakedev-combo-list-container")
     if animate
-      $el.stop().animate { opacity: 0 }, 200, -> $el.hide()
+      $el.stop().animate { opacity: 0 }, 100, -> $el.hide()
     else
       $el.stop().hide()
       $el.css "opacity", 0
@@ -107,9 +115,19 @@ class Combo
             me.delegate.call me.element, me.options[index]
 
           me.setValue me.options[index].value
-          me.hideList(no)
+          me.setFocus no
+          me.hideList no
 
           true
+
+    $listContainer.on "mouseleave", (event) ->
+      $target = if event.toElement? then $(event.toElement) else $(event.relatedTarget)
+
+      if (not $target.hasClass("-cakedev-combo-element") and not $target.closest(".-cakedev-combo-element").length)
+        me.hideList yes
+        me.setFocus no
+
+      yes
 
     @element.append $listContainer
 
@@ -119,6 +137,12 @@ class Combo
     $options = @element.children(".-cakedev-combo-list-container").children("ul").children "li"
     $options.removeClass "-cakedev-combo-selectedOption"
     $options.eq(@selectedIndex).addClass "-cakedev-combo-selectedOption"
+
+  setFocus: (focus) ->
+    if focus
+      @element.children(".-cakedev-combo-element").addClass "-cakedev-combo-focused"
+    else
+      @element.children(".-cakedev-combo-element").removeClass "-cakedev-combo-focused"
 
   setValue: (value) ->
     if @getValue() isnt value
