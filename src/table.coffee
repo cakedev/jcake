@@ -11,13 +11,15 @@ jcakedev.plugins.table =
 
         switch action
           when "getSelected"
-            console.log "Under development..."
+            console.log "Not implemented yet"
+          when "setData"
+            me.setData @, args[1]
           else
             console.log "'#{action}' is not a valid action for cakeTable"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       
-      return @
+      @
 
   create: ($elements, params) ->
     me = @
@@ -31,28 +33,36 @@ jcakedev.plugins.table =
     erasable = if params.erasable? then params.erasable else no
 
     $elements.each ->
-      table = new Table me.pluginManager.newID(), $(@), fields, fieldNames, data, maxRecords, selectable, editable, erasable
-      me.pluginManager.addElement table
+      table = new Table $(@), fields, fieldNames, data, maxRecords, selectable, editable, erasable
+      me.pluginManager.addComponent table
+
+  setData: ($obj, data) ->
+    if data instanceof Array
+      for i in [0...$obj.length]
+        table = @pluginManager.getComponent $obj.eq(i)
+        table.setData(data) if table?
 
 class Table
-  constructor: (@id, @element, @fields, @fieldNames, @data, @maxRecords, @selectable, @editable, @erasable) ->
-    @element.data "jcakedevId", @id
+  constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @selectable, @editable, @erasable) ->
     @currentPage = 0
-
-    @element.addClass "-cakedev-table"
+    @el.addClass "-cakedev-table"
 
     $wrapper = $ "<div class='-cakedev-table-wrapper' />"
     $records = $ "<table class='-cakedev-table-records' />"
     $pages = $ "<div class='-cakedev-table-pages' />"
 
     $wrapper.append $records
-    @element.append $wrapper
-    @element.append $pages
+    @el.append $wrapper
+    @el.append $pages
 
     @setRecords()
 
+  setData: (data) ->
+    @data = data
+    @setRecords()
+
   setRecords: ->
-    $records = @element.find ".-cakedev-table-records"
+    $records = @el.find ".-cakedev-table-records"
     $records.empty()
 
     @setHeaders()
@@ -88,11 +98,11 @@ class Table
       fieldName = if @fieldNames[field]? then @fieldNames[field] else field
       $headers.append "<th>#{fieldName}</th>"
 
-    @element.find(".-cakedev-table-records").append $headers
+    @el.find(".-cakedev-table-records").append $headers
 
   setPages: ->
     me = @
-    $pages = @element.children ".-cakedev-table-pages"
+    $pages = @el.children ".-cakedev-table-pages"
     $pages.empty()
 
     pagesCount = Math.ceil(@data.length / @maxRecords)
@@ -102,7 +112,9 @@ class Table
       $page.data "pageIndex", i
 
       $page.on "click", ->
-        me.setPage $(@).data("pageIndex")
+        index = $(@).data "pageIndex"
+        if index isnt me.currentPage
+          me.setPage index
         no
       
       $pages.append $page
@@ -112,7 +124,7 @@ class Table
 
   setNavigationControls: ->
     me = @
-    $pages = @element.children ".-cakedev-table-pages"
+    $pages = @el.children ".-cakedev-table-pages"
 
     $previous = $ "<a href='#'>&laquo; Anterior</a>"
     $next = $ "<a href='#'>Siguiente &raquo;</a>"
@@ -120,6 +132,7 @@ class Table
     $end = $ "<a href='#'>Ir al final</a>"
 
     lastPage = Math.ceil(@data.length / @maxRecords) - 1
+    lastPage = 0 if lastPage < 0
 
     $previous.on "click", ->
       me.setPage(me.currentPage - 1) if me.currentPage > 0
@@ -148,13 +161,13 @@ class Table
     no
 
   setEditable: ->
-    $actions = @element.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
     
     for i in [0...$actions.length]
       $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-edit-icon' />"
 
   setErasable: ->
-    $actions = @element.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
     
     for i in [0...$actions.length]
       $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-trash-icon' />"

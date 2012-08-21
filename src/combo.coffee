@@ -13,14 +13,13 @@ jcakedev.plugins.combo =
           when "getValue"
             return me.getValue @
           when "setValue"
-            console.log "Under development..."
+            me.setValue @, args[1]
           else
             console.log "'#{action}' is not a valid action for cakeCombo"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       
       @
-
 
   create: ($elements, params) ->
     me = @
@@ -31,28 +30,38 @@ jcakedev.plugins.combo =
       defaultValue = params.defaultValue
 
       $elements.each ->
-        combo = new Combo me.pluginManager.newID(), $(@), options, delegate
+        combo = new Combo $(@), options, delegate
         combo.setValue defaultValue if defaultValue?
 
-        me.pluginManager.addElement combo
+        me.pluginManager.addComponent combo
     else
-      console.log "No options were defined for combo(s)"
-      $elements
+      console.log "No options were defined for cakeCombo"
 
-  getValue: ($element) ->
-    combo = @pluginManager.getElement $element.data "jcakedevId"
+  getValue: ($obj) ->
+    if $obj.length > 1
+      values =
+        for i in [0...$obj.length]
+          $el = $obj.eq i
 
-    if combo?
-      combo.getValue()
+          combo = @pluginManager.getComponent $el
+          continue if not combo?
+
+          combo.getValue()
     else
-      null
+      combo = @pluginManager.getComponent $obj
+      if combo? then combo.getValue() else null
+
+  setValue: ($obj, value) ->
+    for i in [0...$obj.length]
+      $el = $obj.eq i
+
+      combo = @pluginManager.getComponent $el
+      combo.setValue(value) if combo?
 
 class Combo
-  constructor: (@id, @element, @options, @delegate) ->
-    @element.data "jcakedevId", @id
+  constructor: (@el, @options, @delegate) ->
     @selectedIndex = 0
-
-    @element.addClass "-cakedev-combo"
+    @el.addClass "-cakedev-combo"
 
     $comboElement = $ "<table class='-cakedev-combo-element' />"
     $comboElement.append(
@@ -62,7 +71,7 @@ class Combo
       "</tr>"
     )
 
-    @element.append $comboElement
+    @el.append $comboElement
 
     @setOptions()
     @setCurrentOption()
@@ -83,17 +92,17 @@ class Combo
       yes
 
   showList: (animate) ->
-    $el = @element.children(".-cakedev-combo-list-container")
+    $el = @el.children(".-cakedev-combo-list-container")
     $el.stop().show()
     if animate
-      $el.stop().animate { opacity: 1.0 }, 100
+      $el.animate { opacity: 1.0 }, 200
     else
       $el.css "opacity", 1.0
 
   hideList: (animate) ->
-    $el = @element.children(".-cakedev-combo-list-container")
+    $el = @el.children(".-cakedev-combo-list-container")
     if animate
-      $el.stop().animate { opacity: 0 }, 100, -> $el.hide()
+      $el.stop().animate { opacity: 0 }, 200, -> $el.hide()
     else
       $el.stop().hide()
       $el.css "opacity", 0
@@ -112,7 +121,7 @@ class Combo
       $(@).on "click", (event) ->
         if me.selectedIndex isnt index
           if typeof me.delegate is "function"
-            me.delegate.call me.element, me.options[index]
+            me.delegate.call me.el, me.options[index]
 
           me.setValue me.options[index].value
           me.setFocus no
@@ -129,20 +138,20 @@ class Combo
 
       yes
 
-    @element.append $listContainer
+    @el.append $listContainer
 
   setCurrentOption: ->
-    @element.children("table").find(".-cakedev-combo-optionText").text @options[@selectedIndex].text
+    @el.children("table").find(".-cakedev-combo-optionText").text @options[@selectedIndex].text
 
-    $options = @element.children(".-cakedev-combo-list-container").children("ul").children "li"
+    $options = @el.children(".-cakedev-combo-list-container").children("ul").children "li"
     $options.removeClass "-cakedev-combo-selectedOption"
     $options.eq(@selectedIndex).addClass "-cakedev-combo-selectedOption"
 
   setFocus: (focus) ->
     if focus
-      @element.children(".-cakedev-combo-element").addClass "-cakedev-combo-focused"
+      @el.children(".-cakedev-combo-element").addClass "-cakedev-combo-focused"
     else
-      @element.children(".-cakedev-combo-element").removeClass "-cakedev-combo-focused"
+      @el.children(".-cakedev-combo-element").removeClass "-cakedev-combo-focused"
 
   setValue: (value) ->
     if @getValue() isnt value

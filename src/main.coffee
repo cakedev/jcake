@@ -1,35 +1,38 @@
 ###
-jCaKeDev 1.2.6
+jCaKeDev 1.3
 cakedevp.github.com/jcakedev
 ###
 
 jcakedev =
   plugins: {}
-  elements: []
+  components: []
 
-  getElement: (id) ->
-    element = null
+  getComponent: ($el) ->
+    id = $el.data "cakeId"
+    component = null
 
-    for el in @elements
-      if el.id is id
-        element = el
+    for comp in @components
+      if comp.id is id
+        component = comp
         break
 
-    element
+    component
 
-  addElement: (element) ->
-    @elements.push element
+  addComponent: (comp) ->
+    comp.id = @newID()
+    comp.el.data "cakeId", comp.id
+    @components.push comp
 
-  removeElement: (id) ->
+  removeComponent: (id) ->
     index = -1
 
-    for el, i in @elements
-      if el.id is id
+    for comp, i in @components
+      if comp.id is id
         index = i
         break
     
     if index > -1
-      @elements.splice index, 1
+      @components.splice index, 1
 
   newID: ->
     Math.random().toString().substring 2

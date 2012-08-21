@@ -61,7 +61,6 @@
 .-cakedev-combo {
 	font-family: Helvetica, Tahoma, Arial;
 	font-size: 20px;
-	float: left;
 	vertical-align: middle;
 }
 .-cakedev-combo .-cakedev-combo-element {
@@ -338,13 +337,13 @@
 	background-color: #fafafa;
 	border-collapse: collapse;
 	margin: 0px;
-	padding: 7px 8px 7px 8px;
+	padding: 5px 8px 5px 8px;
 	text-align: left;
 }
 .-cakedev-table .-cakedev-table-records th {
 	border-bottom: 1px solid #d8d8d8;
 	font-weight: bold;
-	text-shadow: 0px 1px 0px white;
+	text-shadow: 0px 1px 0px #fff;
 
 	background: -moz-linear-gradient(#fafafa,#eaeaea);
 	background: -webkit-linear-gradient(#fafafa,#eaeaea);
@@ -376,32 +375,51 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa',endColorstr='#eaeaea')";
 }
 .-cakedev-table .-cakedev-table-pages a {
-	color: #05f;
+	background-color: #eeeeee;
+	border: 1px solid #bcbcbc;
+	color: #444;
 	font-size: 13px;
 	padding: 3px 8px 3px 8px;
-	margin: 0px 1px 0px 1px;
+	margin: 0px 2px 0px 2px;
 	text-decoration: none;
+	text-shadow: 0px 1px 0px #fff;
+
+	background: -moz-linear-gradient(#eeeeee,#dadada);
+	background: -webkit-linear-gradient(#eeeeee,#dadada);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee',endColorstr='#dadada')";
+
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+
+	box-shadow: 0px 1px 3px 0px #ccc;
+	-webkit-box-shadow: 0px 1px 3px 0px #ccc;
+	-moz-box-shadow: 0px 1px 3px 0px #ccc;
 }
 .-cakedev-table .-cakedev-table-pages a:hover {
-	text-decoration: underline;
+	background: #eeeeee;
 }
 .-cakedev-table .-cakedev-table-pages .-cakedev-table-page:hover {
-	color: #05e;
-	text-decoration: none;
 }
 .-cakedev-table .-cakedev-table-pages .-cakedev-table-currentPage {
-	background-color: #5a5a5a;
+	background-color: #555555;
+	border-color: #555555;
 	color: #eee;
-	cursor: default;
+	text-shadow: none;
 
-	background: -moz-linear-gradient(#5a5a5a,#777);
-	background: -webkit-linear-gradient(#5a5a5a,#777);
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#5a5a5a',endColorstr='#777777')";
+	box-shadow: inset 0px 0px 10px 0px #333;
+	-webkit-box-shadow: inset 0px 0px 10px 0px #333;
+	-moz-box-shadow: inset 0px 0px 10px 0px #333;
 
-	-webkit-border-radius: 15px;
-	-moz-border-radius: 15px;
-	border-radius: 15px;
+	background: -moz-linear-gradient(#555555,#656565);
+	background: -webkit-linear-gradient(#555555,#656565);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555',endColorstr='#656565')";
 }
 .-cakedev-table .-cakedev-table-pages .-cakedev-table-currentPage:hover {
-	color: #eee;
+	background-color: #555555;
+	cursor: default;
+
+	background: -moz-linear-gradient(#555555,#656565);
+	background: -webkit-linear-gradient(#555555,#656565);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555',endColorstr='#656565')";
 }
