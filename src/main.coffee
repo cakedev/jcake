@@ -34,6 +34,9 @@ jcakedev =
     if index > -1
       @components.splice index, 1
 
+  notify: (text) ->
+    console.log text
+
   newID: ->
     Math.random().toString().substring 2
 

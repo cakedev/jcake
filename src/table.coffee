@@ -11,7 +11,7 @@ jcakedev.plugins.table =
 
         switch action
           when "getSelected"
-            console.log "Not implemented yet"
+            @pm.notify "Not implemented yet"
           when "setData"
             me.setData @, args[1]
           when "setLoading"
@@ -19,13 +19,13 @@ jcakedev.plugins.table =
           when "removeLoading"
             me.removeLoading @
           else
-            console.log "'#{action}' is not a valid action for cakeTable"
+            @pm.notify "'#{action}' is not a valid action for cakeTable"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       
       @
 
-  create: ($elements, params) ->
+  create: ($obj, params) ->
     me = @
 
     fields = if params.fields? then params.fields else []
@@ -38,7 +38,7 @@ jcakedev.plugins.table =
     erasable = if params.erasable? then params.erasable else no
     emptyMessage = if params.emptyMessage? then params.emptyMessage else "..."
 
-    $elements.each ->
+    $obj.each ->
       table = new Table $(@), fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage
       me.pluginManager.addComponent table
 

@@ -15,13 +15,13 @@ jcakedev.plugins.combo =
           when "setValue"
             me.setValue @, args[1]
           else
-            console.log "'#{action}' is not a valid action for cakeCombo"
+            @pm.notify "'#{action}' is not a valid action for cakeCombo"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       
       @
 
-  create: ($elements, params) ->
+  create: ($obj, params) ->
     me = @
 
     if params.options? and params.options.length
@@ -29,13 +29,13 @@ jcakedev.plugins.combo =
       delegate = params.delegate
       defaultValue = params.defaultValue
 
-      $elements.each ->
+      $obj.each ->
         combo = new Combo $(@), options, delegate
         combo.setValue defaultValue if defaultValue?
 
         me.pluginManager.addComponent combo
     else
-      console.log "No options were defined for cakeCombo"
+      @pm.notify "No options were defined for cakeCombo"
 
   getValue: ($obj) ->
     if $obj.length > 1

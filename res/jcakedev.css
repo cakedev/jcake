@@ -211,6 +211,7 @@
 .-cakedev-slideshow {
 	display: block;
 	overflow: hidden;
+	position: relative;
 }
 .-cakedev-slideshow:hover div.-cakedev-slideshow-arrowleft,
 .-cakedev-slideshow:hover div.-cakedev-slideshow-arrowright {
@@ -218,7 +219,10 @@
 }
 .-cakedev-slideshow div.-cakedev-slideshow-slide {
 	overflow: hidden;
-	position: relative;
+	left: 0px;
+	position: absolute;
+	top: 0px;
+	width: 100%;
 }
 .-cakedev-slideshow div.-cakedev-slideshow-arrowleft,
 .-cakedev-slideshow div.-cakedev-slideshow-arrowright {
@@ -226,7 +230,9 @@
 	background-repeat: no-repeat;
 	cursor: pointer;
 	height: 93px;
-	position: relative;
+	position: absolute;
+	margin-top: -46px;
+	top: 50%;
 	visibility: hidden;
 	width: 45px;
 	z-index: 992;
