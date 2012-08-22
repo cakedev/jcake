@@ -1,5 +1,5 @@
 jcakedev.plugins.slideshow = 
-  pluginManager: null,
+  pluginManager: null
 
   init: (pm) ->
     @pluginManager = pm

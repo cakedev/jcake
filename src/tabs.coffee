@@ -1,97 +1,81 @@
-class TabControl
-  constructor: (@element) ->
-    @tabs = []
-    @currentTab = null
-    @direction = "top"
-    @bgcolor = null
+jcakedev.plugins.tabs =
+  pluginManager: null
 
-cake.tabs =
-  tabControls: []
+  init: (pm) ->
+    @pluginManager = pm
+    me = @
 
-  invoke: (action, params) ->
-    if action?
-      if cake.tabs[action]?
-        cake.tabs[action].call @, params
+    $.fn.cakeTabs = (args...) ->
+      if typeof args[0] is "string"
+        action = args[0]
+
+        switch action
+          when "getCurrent"
+            @pm.notify "Not implemented yet"
+          else
+            @pm.notify "'#{action}' is not a valid action for cakeTabs"
       else
-        console.log "'#{action}' is not a valid action for tabs"
-        return @
-    else
-      return cake.tabs.create.call @, params
+        me.create @, if typeof args[0] is "object" then args[0] else {}
+      
+      @
 
-  create: (params) ->
-    @each ->
-      $tabControl = $ @
-      $tabControl.addClass "-cakedev-tabs" if not $tabControl.hasClass "-cakedev-tabs"
+  create: ($obj, params) ->
+    me = @
 
-      tabControl = new TabControl $tabControl
-      cake.tabs.tabControls.push tabControl
+    direction = if params.direction? then params.direction else "top"
 
-      if params?
-        tabControl.direction = params.direction if params.direction?
-        tabControl.bgcolor = params.bgcolor if params.bgcolor?
+    $obj.each ->
+      tabControl = new TabControl $(@), direction
+      me.pluginManager.addComponent tabControl
 
-      tabHeaderClass = if tabControl.direction is "bottom" then "-cakedev-tabHeader-bottom" else "-cakedev-tabHeader-top"
+class TabControl
+  constructor: (@el, @direction) ->
+    @currentTabIndex = 0
 
-      $tabControl.css "background-color", tabControl.bgcolor if tabControl.bgcolor?
+    @el.addClass "-cakedev-tabs"
 
-      $tabHeadersContainer = $ "<div class='-cakedev-tabHeaders-container'></div>'"
-      $tabs = $tabControl.children "div"
+    tabHeaderClass = if @direction is "bottom" then "-cakedev-tabHeader-bottom" else "-cakedev-tabHeader-top"
 
-      if $tabs.length
-        tabHeadersContent = ""
+    $tabHeadersContainer = $ "<div class='-cakedev-tabHeaders-container'></div>'"
+    $tabs = @el.children "div"
 
-        for el, i in $tabs
-          $tab = $tabs.eq i
-          $tab.addClass "-cakedev-tab" if not $tab.hasClass "-cakedev-tab"
-          
-          tabTitle = if $tab.attr "title" then $tab.attr "title" else i
-          $tab.removeAttr "title"
+    if $tabs.length
+      tabHeadersContent = ""
 
-          tabHeadersContent += "<td><span class='-cakedev-tabHeader #{tabHeaderClass}'>#{tabTitle}</span></td>"
-          tabControl.tabs.push $tab
+      for i in [0...$tabs.length]
+        $tab = $tabs.eq i
+        $tab.addClass "-cakedev-tab"
+        
+        tabTitle = if $tab.attr "title" then $tab.attr "title" else i
+        $tab.removeAttr "title"
 
-        if tabControl.direction is "bottom"
-          $tabControl.append $tabHeadersContainer
-        else
-          $tabControl.prepend $tabHeadersContainer
+        tabHeadersContent += "<td><span class='-cakedev-tabHeader #{tabHeaderClass}'>#{tabTitle}</span></td>"
 
-        $tabHeadersContainer.append "<table><tr>#{tabHeadersContent}</tr></table>"
-        $tabHeaders = $tabHeadersContainer.find ".-cakedev-tabHeader"
+      if @direction is "bottom"
+        @el.append $tabHeadersContainer
+      else
+        @el.prepend $tabHeadersContainer
 
-        for el, i in $tabHeaders
-          $tabHeaders.eq(i).on "click", ->
-            $currentTabControl = $(@).closest ".-cakedev-tabs"
-            $headersContainer = $(@).closest ".-cakedev-tabHeaders-container"
+      $tabHeadersContainer.append "<table><tr>#{tabHeadersContent}</tr></table>"
+      $tabHeaders = $tabHeadersContainer.find ".-cakedev-tabHeader"
 
-            index = 0
-            $headers = $headersContainer.find ".-cakedev-tabHeader"
+      me = @
 
-            for el, j in $headers
-              if $headers.eq(j).get(0) is $(@).get(0)
-                index = j
-                break
+      for i in [0...$tabHeaders.length]
+        $tabHeaders.eq(i).data "cakedevIndex", i
+        $tabHeaders.eq(i).on "click", ->
+          $currentTabControl = $(@).closest ".-cakedev-tabs"
+          $headersContainer = $(@).closest ".-cakedev-tabHeaders-container"
 
-            $headers.removeClass("-cakedev-selected-tab").eq(index).addClass "-cakedev-selected-tab"
-            $currentTabControl.children(".-cakedev-tab").hide()
-            $currentTab = $currentTabControl.children(".-cakedev-tab").eq(index).show()
+          me.currentTabIndex = $(@).data "cakedevIndex"
+          me.setCurrentTab()
 
-            tabControl.currentTab = $currentTab
-            true
+      @currentTabIndex = 0
+      @setCurrentTab()
 
-        $tabHeadersContainer.find(".-cakedev-tabHeader").eq(0).addClass "-cakedev-selected-tab"
-        $tabControl.children(".-cakedev-tab").not(":eq(0)").hide()
+  setCurrentTab: ->
+    $headers = @el.children(".-cakedev-tabHeaders-container").find ".-cakedev-tabHeader"
+    $headers.removeClass "-cakedev-selected-tab"
+    $headers.eq(@currentTabIndex).addClass "-cakedev-selected-tab"
 
-        tabControl.currentTab = $tabControl.children(".-cakedev-tab").eq 0
-      true
-
-  getActiveTab: ->
-    tabControl = cake.tabs.getCurrentElement.call @
-    if tabControl? then tabControl.currentTab else null
-
-  getCurrentElement: ->
-    element = null
-    for tab in cake.tabs.tabControls
-      if tab.element.get(0) == @get(0)
-        element = tab
-        break
-    element
+    @el.children(".-cakedev-tab").hide().eq(@currentTabIndex).show()

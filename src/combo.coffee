@@ -1,5 +1,5 @@
 jcakedev.plugins.combo =
-  pluginManager: null,
+  pluginManager: null
 
   init: (pm) ->
     @pluginManager = pm
@@ -35,7 +35,7 @@ jcakedev.plugins.combo =
 
         me.pluginManager.addComponent combo
     else
-      @pm.notify "No options were defined for cakeCombo"
+      @pluginManager.notify "No options were defined for cakeCombo"
 
   getValue: ($obj) ->
     if $obj.length > 1
