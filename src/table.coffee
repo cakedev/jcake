@@ -14,6 +14,10 @@ jcakedev.plugins.table =
             console.log "Not implemented yet"
           when "setData"
             me.setData @, args[1]
+          when "setLoading"
+            me.setLoading @
+          when "removeLoading"
+            me.removeLoading @
           else
             console.log "'#{action}' is not a valid action for cakeTable"
       else
@@ -44,8 +48,19 @@ jcakedev.plugins.table =
         table = @pluginManager.getComponent $obj.eq(i)
         table.setData(data) if table?
 
+  setLoading: ($obj) ->
+    for i in [0...$obj.length]
+      table = @pluginManager.getComponent $obj.eq(i)
+      table.setLoading() if table?
+
+  removeLoading: ($obj) ->
+    for i in [0...$obj.length]
+      table = @pluginManager.getComponent $obj.eq(i)
+      table.removeLoading() if table?
+
 class Table
   constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage) ->
+    @loading = no
     @currentPage = 0
     @el.addClass "-cakedev-table"
 
@@ -63,12 +78,17 @@ class Table
 
   setData: (data) ->
     @data = data
-    @setRecords()
+    @currentPage = 0
+    @setRecords() if not @loading
 
-  clear: ->
+  clearData: ->
     setData []
 
-  
+  showEmptyMessage: ->
+    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-message").show()
+
+  hideEmptyMessage: ->
+    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-message").hide()
 
   getValueWithFormat: (field, value) ->
     if typeof @formats[field] is "function"
@@ -82,6 +102,7 @@ class Table
     $records.empty()
 
     @setHeaders()
+    @hideEmptyMessage()
 
     if @data.length
       start = @currentPage * @maxRecords
@@ -101,16 +122,15 @@ class Table
 
         $records.append $record
 
-      $records.find("tr:last td").css "border", "none"
-    else
-      @el.children "-cakedev-table-wrapper"
-
-    @setPages()
-
-    if @data.length
       @setSelectable() if @selectable
       @setEditable() if @editable
       @setErasable() if @erasable
+
+      $records.find("tr:last td").css "border", "none"
+    else
+      @showEmptyMessage()
+
+    @setPages()
 
   setHeaders: ->
     $headers = $ "<tr />"
@@ -204,8 +224,17 @@ class Table
     for i in [0...$actions.length]
       $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-trash-icon' />"
 
-  setLoading: ->
+  clearRecords: ->
+    @el.find(".-cakedev-table-records").find("tr").not(":first").remove()
+    @el.children(".-cakedev-table-pages").empty()
+    @hideEmptyMessage()
 
+  setLoading: ->
+    @clearRecords()
+    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-loading").show()
+    @loading = yes
 
   removeLoading: ->
-
+    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-loading").hide()
+    @setRecords()
+    @loading = no
