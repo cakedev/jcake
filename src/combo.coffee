@@ -127,7 +127,7 @@ class Combo
           me.setFocus no
           me.hideList no
 
-          true
+          yes
 
     $listContainer.on "mouseleave", (event) ->
       $target = if event.toElement? then $(event.toElement) else $(event.relatedTarget)

@@ -28,12 +28,14 @@ jcakedev.plugins.table =
     fieldNames = if params.fieldNames? then params.fieldNames else {}
     data = if params.data? then params.data else []
     maxRecords = if params.maxRecords? then params.maxRecords else 20
+    formats = if params.formats? then params.formats else {}
     selectable = if params.selectable? then params.selectable else no
     editable = if params.editable? then params.editable else no
     erasable = if params.erasable? then params.erasable else no
+    emptyMessage = if params.emptyMessage? then params.emptyMessage else "..."
 
     $elements.each ->
-      table = new Table $(@), fields, fieldNames, data, maxRecords, selectable, editable, erasable
+      table = new Table $(@), fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage
       me.pluginManager.addComponent table
 
   setData: ($obj, data) ->
@@ -43,7 +45,7 @@ jcakedev.plugins.table =
         table.setData(data) if table?
 
 class Table
-  constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @selectable, @editable, @erasable) ->
+  constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage) ->
     @currentPage = 0
     @el.addClass "-cakedev-table"
 
@@ -52,6 +54,8 @@ class Table
     $pages = $ "<div class='-cakedev-table-pages' />"
 
     $wrapper.append $records
+    $wrapper.append "<div class='-cakedev-table-loading' />"
+    $wrapper.append "<div class='-cakedev-table-message'>#{@emptyMessage}</div>"
     @el.append $wrapper
     @el.append $pages
 
@@ -61,34 +65,52 @@ class Table
     @data = data
     @setRecords()
 
+  clear: ->
+    setData []
+
+  
+
+  getValueWithFormat: (field, value) ->
+    if typeof @formats[field] is "function"
+      valueWithFormat = @formats[field].call value, value
+      value = valueWithFormat if valueWithFormat?
+    
+    if value? then value else ""
+
   setRecords: ->
     $records = @el.find ".-cakedev-table-records"
     $records.empty()
 
     @setHeaders()
 
-    start = @currentPage * @maxRecords
-    end = start + @maxRecords
+    if @data.length
+      start = @currentPage * @maxRecords
+      end = start + @maxRecords
 
-    for i in [start...end]
-      if i >= @data.length
-        break
+      for i in [start...end]
+        if i >= @data.length
+          break
 
-      $record = $ "<tr />";
-      $record.append "<td class='-cakedev-table-recordActions' />"
+        $record = $ "<tr />";
+        $record.append "<td class='-cakedev-table-recordActions' />"
 
-      for field in @fields
-        value = if @data[i][field]? then @data[i][field] else ""
-        $record.append "<td>#{value}</td>"
+        for field in @fields
+          value = @getValueWithFormat field, @data[i][field]
 
-      $records.append $record
+          $record.append "<td>#{value}</td>"
 
-    $records.find("tr:last td").css "border", "none"
+        $records.append $record
+
+      $records.find("tr:last td").css "border", "none"
+    else
+      @el.children "-cakedev-table-wrapper"
 
     @setPages()
-    @setSelectable() if @selectable
-    @setEditable() if @editable
-    @setErasable() if @erasable
+
+    if @data.length
+      @setSelectable() if @selectable
+      @setEditable() if @editable
+      @setErasable() if @erasable
 
   setHeaders: ->
     $headers = $ "<tr />"
@@ -120,7 +142,10 @@ class Table
       $pages.append $page
 
     $pages.children(".-cakedev-table-page").eq(@currentPage).addClass "-cakedev-table-currentPage"
-    @setNavigationControls()
+
+    if @data.length
+      @setNavigationControls()
+      @setInfo()
 
   setNavigationControls: ->
     me = @
@@ -148,10 +173,17 @@ class Table
       no
 
     $pages
+      .prepend($end)
+      .prepend($next)
       .prepend($previous)
       .prepend($beginning)
-      .append($next)
-      .append($end)
+
+  setInfo: ->
+    beginning = @currentPage * @maxRecords
+    end = beginning + @maxRecords
+    end = @data.length if end > @data.length
+
+    @el.children(".-cakedev-table-pages").append "<span class='-cakedev-table-info'>Mostrando #{beginning + 1} a #{end} de #{@data.length}</span>"
 
   setPage: (index) ->
     @currentPage = index
@@ -171,3 +203,9 @@ class Table
     
     for i in [0...$actions.length]
       $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-trash-icon' />"
+
+  setLoading: ->
+
+
+  removeLoading: ->
+
