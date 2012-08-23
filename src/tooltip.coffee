@@ -1,87 +1,115 @@
-class Tooltip
-  constructor: (@element, @text, @direction) ->
+jcakedev.plugins.tooltip =
+  pluginManager: null  
 
-cake.tooltip =
-  defaultDirection: "bottom"
-  horizontalMargin: 10
-  verticalMargin: 6
+  init: (pm) ->
+    @pluginManager = pm
+    me = @
 
-  invoke: (action, params) ->
-    if action?
-      if cake.tooltip[action]?
-        return cake.tooltip[action].call @, params
+    $.fn.cakeTooltip = (args...) ->
+      if typeof args[0] is "string"
+        action = args[0]
+
+        switch action
+          when "setText"
+            @pm.notify "Not implemented yet"
+          else
+            @pm.notify "'#{action}' is not a valid action for cakeTooltip"
       else
-        console.log "#{action} is not a valid action for tooltip"
-        return @
+        me.create @, if typeof args[0] is "object" then args[0] else {}
+      
+      @
+
+  create: ($obj, params) ->
+    me = @
+
+    text = if params.text? then params.text else ""
+    direction = if params.direction? then params.direction else "bottom"
+    hMargin = if params.hMargin? then params.hMargin else 10
+    vMargin = if params.vMargin? then params.vMargin else 6
+    animate = if params.animate? then params.animate else yes
+
+    $obj.each ->
+      tooltip = new Tooltip $(@), text, direction, hMargin, vMargin, animate
+      me.pluginManager.addComponent tooltip
+
+class Tooltip
+  constructor: (@el, @text, @direction, @hMargin, @vMargin, @animate) ->
+    @createTooltip()
+
+    me = @
+
+    @el.on "mouseenter", ->
+      me.show()
+
+    @el.on "mouseleave", ->
+      me.hide()
+
+  createTooltip: ->
+    @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
+    $("body").append @tooltip
+    @setText @text
+    @setDirection @direction
+
+  setText: (text) ->
+    @tooltip.children("p").text text
+
+  setDirection: (direction) ->
+    @direction = direction
+
+    $arrow = @tooltip.children "span"
+    $arrow.removeClass()
+    $arrow.addClass "-cakedev-arrow"
+
+    switch direction
+      when "left" then $arrow.addClass "-cakedev-arrow-right-black"
+      when "right" then $arrow.addClass "-cakedev-arrow-left-black"
+      when "top" then $arrow.addClass "-cakedev-arrow-down-black"
+      else $arrow.addClass "-cakedev-arrow-up-black"
+
+  show: ->
+    switch @direction
+      when "left" then @setToLeft()
+      when "right" then @setToRight()
+      when "top" then @setToTop()
+      else @setToBottom()
+
+  hide: ->
+    if @animate
+      @tooltip.stop()
+      @tooltip.animate { opacity: 0 }, 150, -> $(@).hide()
     else
-      return cake.tooltip.create.call @, params
+      @tooltip.hide()
 
-  create: (params) ->
-    text = ""
-    direction = cake.tooltip.defaultDirection
+  setToTop: ->
+    top = @el.offset().top - @tooltip.outerHeight() - @vMargin
+    left = @el.offset().left + parseInt(@el.outerWidth() / 2, 10) - parseInt(@tooltip.outerWidth() / 2, 10)
 
-    if params?
-      text = params.text or text
-      direction = params.direction or direction
+    @showTooltip top, left
 
-    $element = $ "<div class='-cakedev-tooltip'><p></p><span class='-cakedev-arrow'></span></div>"
-    $("body").append $element
+  setToRight: ->
+    top = @el.offset().top + parseInt(@el.outerHeight() / 2, 10) - parseInt(@tooltip.outerHeight() / 2, 10)
+    left = @el.offset().left + @el.outerWidth() + @hMargin
 
-    tooltip = new Tooltip $element, text, direction
+    @showTooltip top, left
 
-    @.each ->
-      $(@).on "mouseenter", ->
-        cake.tooltip.setTooltip $(@), tooltip
-
-      $(@).on "mouseleave", ->
-        $element.hide()
-
-  setTooltip: ($target, tooltip) ->
-    $element = tooltip.element
-    $element.children("p").text tooltip.text
-    fn = null
-
-    switch tooltip.direction
-      when "left" then fn = @.setToLeft
-      when "right" then fn = @.setToRight
-      when "top" then fn = @.setToTop
-      else fn = @.setToBottom
-
-    fn.call @, $target, $element
-
-  setToTop: ($target, $element) ->
-    $element.children(".-cakedev-arrow").addClass "-cakedev-arrow-down-black"
-
-    top = $target.offset().top - $element.outerHeight() - @.verticalMargin
-    left = $target.offset().left + parseInt($target.outerWidth() / 2, 10) - parseInt($element.outerWidth() / 2, 10)
-
-    @.show $element, top, left
-
-  setToRight: ($target, $element) ->
-    $element.children(".-cakedev-arrow").addClass "-cakedev-arrow-left-black"
-
-    top = $target.offset().top + parseInt($target.outerHeight() / 2, 10) - parseInt($element.outerHeight() / 2, 10)
-    left = $target.offset().left + $target.outerWidth() + @.horizontalMargin
-
-    @.show $element, top, left
-
-  setToBottom: ($target, $element) ->
-    $element.children(".-cakedev-arrow").addClass "-cakedev-arrow-up-black"
-
-    top = $target.offset().top + $target.outerHeight() + @.verticalMargin
-    left = $target.offset().left + parseInt($target.outerWidth() / 2, 10) - parseInt($element.outerWidth() / 2, 10)
+  setToBottom: ->
+    top = @el.offset().top + @el.outerHeight() + @vMargin
+    left = @el.offset().left + parseInt(@el.outerWidth() / 2, 10) - parseInt(@tooltip.outerWidth() / 2, 10)
     
-    @.show $element, top, left
+    @showTooltip top, left
 
-  setToLeft: ($target, $element) ->
-    $element.children(".-cakedev-arrow").addClass "-cakedev-arrow-right-black"
+  setToLeft: ->
+    top = @el.offset().top + parseInt(@el.outerHeight() / 2, 10) - parseInt(@tooltip.outerHeight() / 2, 10)
+    left = @el.offset().left - @tooltip.outerWidth() - @hMargin
 
-    top = $target.offset().top + parseInt($target.outerHeight() / 2, 10) - parseInt($element.outerHeight() / 2, 10)
-    left = $target.offset().left - $element.outerWidth() - @.horizontalMargin
+    @showTooltip top, left
 
-    @.show $element, top, left
+  showTooltip: (top, left) ->
+    @tooltip.css("top", top + "px");
+    @tooltip.css("left", left + "px");
 
-  show: ($element, top, left) ->
-    $element.css("top", top + "px");
-    $element.css("left", left + "px");
-    $element.show()
+    if @animate
+      @tooltip.stop().show()
+      @tooltip.animate { opacity: 0.80 }, 150
+    else
+      @tooltip.show()
