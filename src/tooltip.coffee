@@ -34,7 +34,11 @@ jcakedev.plugins.tooltip =
 
 class Tooltip
   constructor: (@el, @text, @direction, @hMargin, @vMargin, @animate) ->
-    @createTooltip()
+    @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
+    $("body").append @tooltip
+    
+    @setText @text
+    @setDirection @direction
 
     me = @
 
@@ -43,12 +47,6 @@ class Tooltip
 
     @el.on "mouseleave", ->
       me.hide()
-
-  createTooltip: ->
-    @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
-    $("body").append @tooltip
-    @setText @text
-    @setDirection @direction
 
   setText: (text) ->
     @tooltip.children("p").text text
