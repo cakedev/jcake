@@ -37,9 +37,11 @@ jcakedev.plugins.table =
     editable = if params.editable? then params.editable else no
     erasable = if params.erasable? then params.erasable else no
     emptyMessage = if params.emptyMessage? then params.emptyMessage else "..."
+    onEdit = params.onEdit
+    onErase = params.onErase
 
     $obj.each ->
-      table = new Table $(@), fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage
+      table = new Table $(@), fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage, onEdit, onErase
       me.pluginManager.addComponent table
 
   setData: ($obj, data) ->
@@ -59,7 +61,7 @@ jcakedev.plugins.table =
       table.removeLoading() if table?
 
 class Table
-  constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage) ->
+  constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage, @onEdit, @onErase) ->
     @loading = no
     @currentPage = 0
     @el.addClass "-cakedev-table"
@@ -214,15 +216,41 @@ class Table
 
   setEditable: ->
     $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    currentIndex = @currentPage * @maxRecords
+
+    me = @
     
     for i in [0...$actions.length]
-      $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-edit-icon' />"
+      $action = $ "<span class='-cakedev-table-action -cakedev-edit-icon' />"
+      $action.data "cakedevIndex", currentIndex
+      $action.on "click", ->
+        me.raiseOnEdit $(@).data("cakedevIndex")
+
+      $actions.eq(i).append $action
+      currentIndex++
+
+  raiseOnEdit: (index) ->
+    if typeof @onEdit is "function"
+      @onEdit.call @el, @data[index], index
 
   setErasable: ->
     $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    currentIndex = @currentPage * @maxRecords
+
+    me = @
     
     for i in [0...$actions.length]
-      $actions.eq(i).append "<span class='-cakedev-table-action -cakedev-trash-icon' />"
+      $action = $ "<span class='-cakedev-table-action -cakedev-trash-icon' />"
+      $action.data "cakedevIndex", currentIndex
+      $action.on "click", ->
+        me.raiseOnErase $(@).data("cakedevIndex")
+
+      $actions.eq(i).append $action
+      currentIndex++
+
+  raiseOnErase: (index) ->
+    if typeof @onErase is "function"
+      @onErase.call @el, @data[index], index
 
   clearRecords: ->
     @el.find(".-cakedev-table-records").find("tr").not(":first").remove()

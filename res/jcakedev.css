@@ -376,6 +376,7 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa',endColorstr='#eaeaea')";
 }
 .-cakedev-table .-cakedev-table-records tr:hover .-cakedev-table-action {
+	cursor: pointer;
 	visibility: visible;
 }
 .-cakedev-table .-cakedev-table-records td {
