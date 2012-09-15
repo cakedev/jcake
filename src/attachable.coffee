@@ -47,11 +47,20 @@ $(document).on "scroll", ->
     $el = cmp.el
 
     if not $el.hasClass("-cakedev-attachable") and scrollTop > (cmp.top - cmp.margin)
+      cmp.originalWidth = $el.width "width"
+      cmp.originalHeigh = $el.css "height"
+
+      $el.css "width", $el.width()
+      $el.css "height", $el.height()
+
       $el.addClass "-cakedev-attachable"
       $el.after "<div class='-cakedev-dummy' style='height: #{$el.outerHeight()}px; width: #{$el.outerWidth()}px;'></div>"
     else if $el.hasClass("-cakedev-attachable") and scrollTop <= (cmp.top - cmp.margin)
       $el.removeClass "-cakedev-attachable"
+
       $el.parent().children(".-cakedev-dummy").remove()
+      $el.css "width", cmp.originalWidth
+      $el.css "height", cmp.originalHeigh
 
     if $el.hasClass "-cakedev-attachable"
       $el.css "top", cmp.top
