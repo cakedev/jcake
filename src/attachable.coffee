@@ -1,56 +1,66 @@
-class Attachable
-  constructor: (@element, @top, @left, @direction, @margin) ->
+jcakedev.plugins.attachable =
+  pluginManager: null  
 
-cake.attachable =
-  attachables: []
-  defaultDirection: "top"
-  defaultMargin: 0
+  init: (pm) ->
+    @pluginManager = pm
+    me = @
 
-  invoke: (action, params) ->
-    if action?
-      if cake.attachable[action]?
-        return cake.attachable[action].call @, params
+    $.fn.cakeAttach = (args...) ->
+      if typeof args[0] is "string"
+        action = args[0]
+
+        switch action
+          when "setDirection"
+            @pm.notify "Not implemented yet"
+          else
+            @pm.notify "'#{action}' is not a valid action for cakeAttach"
       else
-        console.log "#{action} is not a valid action for attachable"
-        return @
-    else
-      return cake.attachable.create.call @, params
+        me.create @, if typeof args[0] is "object" then args[0] else {}
+      
+      @
 
-  create: (params) ->
-    direction = cake.attachable.defaultDirection
-    margin = cake.attachable.defaultMargin
+  create: ($obj, params) ->
+    me = @
 
-    if params?
-      direction = params.direction or direction
-      margin = params.margin or margin
+    direction = if params.direction? then params.direction else "top"
+    margin = if params.margin? then params.margin else 0
+    zIndex = if params.zIndex? then params.zIndex else "auto"
 
-    @.each ->
-      $el = $(@)
-      $el.css "z-index", if params? and params.zIndex? then params.zIndex else $el.css "z-index"
-      attachable = new Attachable $el, $el.offset().top, $el.offset().left, direction, margin
-      cake.attachable.attachables.push attachable
+    $obj.each ->
+      attachable = new Attachable $(@), direction, margin, zIndex
+      me.pluginManager.addComponent attachable
+
+class Attachable
+  constructor: (@el, @direction, @margin, @zIndex) ->
+    @el.css "z-index", this.zIndex
+
+    this.top = @el.offset().top
+    this.left = @el.offset().left
 
 $(document).on "scroll", ->
   scrollTop = $(window).scrollTop()
 
-  for attachable in cake.attachable.attachables
-    $el = attachable.element
+  for cmp in jcakedev.components
+    if not (cmp instanceof Attachable)
+      continue
 
-    if not $el.hasClass("-cakedev-attachable") and scrollTop > (attachable.top - attachable.margin)
+    $el = cmp.el
+
+    if not $el.hasClass("-cakedev-attachable") and scrollTop > (cmp.top - cmp.margin)
       $el.addClass "-cakedev-attachable"
       $el.after "<div class='-cakedev-dummy' style='height: #{$el.outerHeight()}px; width: #{$el.outerWidth()}px;'></div>"
-    else if $el.hasClass("-cakedev-attachable") and scrollTop <= (attachable.top - attachable.margin)
+    else if $el.hasClass("-cakedev-attachable") and scrollTop <= (cmp.top - cmp.margin)
       $el.removeClass "-cakedev-attachable"
       $el.parent().children(".-cakedev-dummy").remove()
 
     if $el.hasClass "-cakedev-attachable"
-      $el.css "top", attachable.top
-      $el.css "left", attachable.left
+      $el.css "top", cmp.top
+      $el.css "left", cmp.left
 
-      if attachable.direction is "top"
-        $el.css "top", "#{attachable.margin}px"
+      if cmp.direction is "top"
+        $el.css "top", "#{cmp.margin}px"
       else
-        $el.css "margin-bottom", "#{attachable.margin}px"
+        $el.css "margin-bottom", "#{cmp.margin}px"
     else
       $el.css "top", "auto"
       $el.css "left", "auto"
