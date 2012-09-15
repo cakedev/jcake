@@ -27,19 +27,14 @@ jcakedev.plugins.tooltip =
     hMargin = if params.hMargin? then params.hMargin else 10
     vMargin = if params.vMargin? then params.vMargin else 6
     animate = if params.animate? then params.animate else yes
+    animationSpeed = if params.animationSpeed? then params.animationSpeed else 150
 
     $obj.each ->
-      tooltip = new Tooltip $(@), text, direction, hMargin, vMargin, animate
+      tooltip = new Tooltip $(@), text, direction, hMargin, vMargin, animate, animationSpeed
       me.pluginManager.addComponent tooltip
 
 class Tooltip
-  constructor: (@el, @text, @direction, @hMargin, @vMargin, @animate) ->
-    @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
-    $("body").append @tooltip
-    
-    @setText @text
-    @setDirection @direction
-
+  constructor: (@el, @text, @direction, @hMargin, @vMargin, @animate, @animationSpeed) ->
     me = @
 
     @el.on "mouseenter", ->
@@ -65,6 +60,13 @@ class Tooltip
       else $arrow.addClass "-cakedev-arrow-up-black"
 
   show: ->
+    if not @tooltip?
+      @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
+      $("body").append @tooltip
+
+      @setText @text
+      @setDirection @direction
+
     switch @direction
       when "left" then @setToLeft()
       when "right" then @setToRight()
@@ -73,10 +75,15 @@ class Tooltip
 
   hide: ->
     if @animate
+      me = @
+
       @tooltip.stop()
-      @tooltip.animate { opacity: 0 }, 150, -> $(@).hide()
+      @tooltip.animate { opacity: 0 }, @animationSpeed, ->
+        $(@).remove()
+        me.tooltip = null
     else
-      @tooltip.hide()
+      @tooltip.remove()
+      @tooltip = null
 
   setToTop: ->
     top = @el.offset().top - @tooltip.outerHeight() - @vMargin
@@ -107,7 +114,6 @@ class Tooltip
     @tooltip.css("left", left + "px");
 
     if @animate
-      @tooltip.stop().show()
-      @tooltip.animate { opacity: 0.80 }, 150
+      @tooltip.stop().animate { opacity: 0.80 }, @animationSpeed
     else
       @tooltip.show()
