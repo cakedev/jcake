@@ -1,47 +1,47 @@
 .-cakedev-tooltip {
-	@include linearGradient(#333, #000);
-	@include rounded(3px, 3px, 3px, 3px);
-	@include opacity(0);
+    @include linearGradient(#333, #000);
+    @include rounded(3px, 3px, 3px, 3px);
+    @include opacity(0);
 
-	background-color: #000;
-	color: #fff;
-	font-size: 12px;
-	padding: 6px 10px 6px 10px;
-	position: absolute;
-	z-index: 999;
+    background-color: #000;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 10px 6px 10px;
+    position: absolute;
+    z-index: 999;
 
-	p {
-		margin: 0px;
-		padding: 0px;
-	}
-	.-cakedev-arrow {
-		position: absolute;
-		z-index: 999;
-	}
-	.-cakedev-arrow-up-black {
-		left: 50%;
-		margin: {
-			left: -3px;
-			top: -4px;
-		}
-		top: 0px;
-	}
-	.-cakedev-arrow-right-black {
-		left: 100%;
-		margin-top: -3px;
-		top: 50%;
-	}
-	.-cakedev-arrow-down-black {
-		left: 50%;
-		margin-left: -3px;
-		top: 100%;
-	}
-	.-cakedev-arrow-left-black {
-		left: 0px;
-		margin: {
-			left: -4px;
-			top: -3px;
-		}
-		top: 50%;
-	}
+    p {
+        margin: 0px;
+        padding: 0px;
+    }
+    .-cakedev-arrow {
+        position: absolute;
+        z-index: 999;
+    }
+    .-cakedev-arrow-up-black {
+        left: 50%;
+        margin: {
+            left: -3px;
+            top: -4px;
+        }
+        top: 0px;
+    }
+    .-cakedev-arrow-right-black {
+        left: 100%;
+        margin-top: -3px;
+        top: 50%;
+    }
+    .-cakedev-arrow-down-black {
+        left: 50%;
+        margin-left: -3px;
+        top: 100%;
+    }
+    .-cakedev-arrow-left-black {
+        left: 0px;
+        margin: {
+            left: -4px;
+            top: -3px;
+        }
+        top: 50%;
+    }
 }
