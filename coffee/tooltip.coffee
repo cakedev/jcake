@@ -11,9 +11,9 @@ jcakedev.plugins.tooltip =
 
         switch action
           when "setText"
-            @pm.notify "Not implemented yet"
+            pm.notify "Not implemented yet"
           else
-            @pm.notify "'#{action}' is not a valid action for cakeTooltip"
+            pm.notify "'#{action}' is not a valid action for cakeTooltip"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       

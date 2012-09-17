@@ -11,9 +11,9 @@ jcakedev.plugins.attachable =
 
         switch action
           when "setDirection"
-            @pm.notify "Not implemented yet"
+            pm.notify "Not implemented yet"
           else
-            @pm.notify "'#{action}' is not a valid action for cakeAttach"
+            pm.notify "'#{action}' is not a valid action for cakeAttach"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       

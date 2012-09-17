@@ -15,7 +15,7 @@ jcakedev.plugins.combo =
           when "setValue"
             me.setValue @, args[1]
           else
-            @pm.notify "'#{action}' is not a valid action for cakeCombo"
+            pm.notify "'#{action}' is not a valid action for cakeCombo"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       

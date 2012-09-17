@@ -1,0 +1,85 @@
+.-cakedev-combo {
+	$mainColor: #3c78b5;
+
+	font: {
+		family: $fontfamily;
+		size: 20px;
+	}
+	vertical-align: middle;
+
+	.-cakedev-combo-element {
+		border-collapse: collapse;
+		cursor: pointer;
+		margin: 0px;
+		padding: 0px;
+
+		td {
+			border-collapse: collapse;
+			margin: 0px;
+		}
+	}
+	.-cakedev-combo-focused {
+		background-color: $mainColor;
+
+		td {
+			color: #fff;
+		}
+		.-cakedev-arrow {
+			background-position: -7px -14px;
+			display: block;
+		}
+	}
+	.-cakedev-combo-optionText {
+		color: $mainColor;
+		font: {
+			size: 20px;
+			weight: bold;
+		}
+		height: 27px;
+		padding: 1px 8px 0px 5px;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+	.-cakedev-combo-arrow {
+		padding: 0px 10px 0px 0px;
+	}
+	.-cakedev-arrow {
+		display: block;
+	}
+	.-cakedev-combo-list-container {
+		@include shadow(0px, 3px, 5px, 0px, #ddd);
+		@include opacity(0);
+
+		background: #fff;
+		border: 1px solid #ddd;
+		display: none;
+		max-height: 200px;
+		overflow: auto;
+		position: absolute;
+
+		ul {
+			list-style: none;
+			margin: 0px;
+			padding: 0px;
+
+			li {
+				cursor: pointer;
+				color: #333;
+				display: block;
+				font-size: 16px;
+				font-weight: normal;
+				padding: 5px 35px 5px 20px;
+				text-decoration: none;
+				white-space: nowrap;
+
+				&:hover {
+					background-color: #eee;
+				}
+			}
+			.-cakedev-combo-selectedOption {
+				background-color: #eee;
+				cursor: default;
+			}
+		}
+	}
+}

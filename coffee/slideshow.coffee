@@ -11,11 +11,11 @@ jcakedev.plugins.slideshow =
 
         switch action
           when "moveNext"
-            @pm.notify "Not implemented yet"
+            pm.notify "Not implemented yet"
           when "movePrevious"
-            @pm.notify "Not implemented yet"
+            pm.notify "Not implemented yet"
           else
-            @pm.notify "'#{action}' is not a valid action for cakeSlideshow"
+            pm.notify "'#{action}' is not a valid action for cakeSlideshow"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       

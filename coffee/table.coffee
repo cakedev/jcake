@@ -11,7 +11,7 @@ jcakedev.plugins.table =
 
         switch action
           when "getSelected"
-            @pm.notify "Not implemented yet"
+            pm.notify "Not implemented yet"
           when "setData"
             me.setData @, args[1]
           when "setLoading"
@@ -19,7 +19,7 @@ jcakedev.plugins.table =
           when "removeLoading"
             me.removeLoading @
           else
-            @pm.notify "'#{action}' is not a valid action for cakeTable"
+            pm.notify "'#{action}' is not a valid action for cakeTable"
       else
         me.create @, if typeof args[0] is "object" then args[0] else {}
       

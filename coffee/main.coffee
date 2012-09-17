@@ -40,6 +40,31 @@ jcakedev =
   newID: ->
     Math.random().toString().substring 2
 
+  lockContent: (callback) ->
+    if !$("#cakedev-screenLocker").length
+      $locker = $ "<div id='cakedev-screenLocker' />"
+      $("body").append $locker
+
+      $locker.fadeIn "fast", ->
+        if typeof callback is "function"
+          callback()
+    else if typeof callback is "function"
+      callback()
+
+  unlockContent: (callback) ->
+    $locker = $("#cakedev-screenLocker")
+
+    doFinalActions = ->
+      $locker.remove()
+
+      if typeof callback is "function"
+          callback()
+
+    if $locker.length
+      $locker.fadeOut "fast", doFinalActions
+    else
+      doFinalActions()
+
   init: ($) ->
     for plugin of @plugins
       @plugins[plugin].init @
