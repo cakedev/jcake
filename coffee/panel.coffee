@@ -59,14 +59,17 @@ jcakedev.plugins.panel =
 
 class Panel
   constructor: (@el, @title, @modal, @draggable, @closable, @width, @height) ->
-    @el.addClass "-cakedev-panel"
+    @panel = $ "<div class='-cakedev-panel' />"
+    @panel.insertBefore @el
 
     @header = $ "<div class='-cakedev-panel-header' />"
-    @el.prepend @header
 
-    @el.css "width", @width
-    @el.css "height", @height
-    @el.css "margin-left", "-#{Math.round(@el.width() / 2)}px"
+    @panel.append @header
+    @panel.append @el
+
+    @panel.css "width", @width
+    @panel.css "height", @height
+    @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
     @draggingOffset = null
 
@@ -80,9 +83,9 @@ class Panel
 
   onMousemove: (event) ->
     if @draggingOffset?
-      @el.addClass "-cakedev-draggable" if not @el.hasClass "-cakedev-draggable"
+      @panel.addClass "-cakedev-draggable" if not @panel.hasClass "-cakedev-draggable"
 
-      @el.offset
+      @panel.offset
         top: event.pageY - @draggingOffset.top
         left: event.pageX - @draggingOffset.left
 
@@ -91,15 +94,15 @@ class Panel
       me = this
       @header.addClass "-cakedev-draggable"
 
-      @el.on "mousedown", (event) ->
+      @panel.on "mousedown", (event) ->
         me.draggingOffset =
-          top: event.pageY - me.el.offset().top
-          left: event.pageX - me.el.offset().left
+          top: event.pageY - me.panel.offset().top
+          left: event.pageX - me.panel.offset().left
 
         event.preventDefault()
     else
-      @el.removeClass "-cakedev-draggable"
-      @el.off "mousedown"
+      @panel.removeClass "-cakedev-draggable"
+      @panel.off "mousedown"
 
   setClosable: (allowClose) ->
     $closeBtn = @header.children ".-cakedev-close-button"
@@ -121,10 +124,10 @@ class Panel
     $closeBtn
 
   show: ->
-    @el.show()
+    @panel.show()
 
   hide: ->
-    @el.hide()
+    @panel.hide()
 
 $(document).on "mousemove", (event) ->
   for cmp in jcakedev.components
@@ -135,4 +138,4 @@ $(document).on "mouseup", ->
   for cmp in jcakedev.components
     if cmp instanceof Panel
       cmp.draggingOffset = null
-      cmp.el.removeClass "-cakedev-draggable"
+      cmp.panel.removeClass "-cakedev-draggable"
