@@ -127,19 +127,6 @@ $fontfamily: "Helvetica Neue", Helvetica, Arial, sans-serif;
     width: 16px;
 }
 
-#cakedev-screenLocker {
-    @include opacity(50);
-
-    background: #000;
-    display: none;
-    height: 100%;
-    left: 0px;
-    position: fixed;
-    top: 0px;
-    width: 100%;
-    z-index: 996;
-}
-
 @import "combo";
 @import "tabs";
 @import "slideshow";

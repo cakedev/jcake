@@ -14,6 +14,8 @@ jcakedev.plugins.panel =
             me.show @
           when "hide"
             me.hide @
+          when "setTitle"
+            me.setTitle @, args[1]
           else
             pm.notify "'#{action}' is not a valid action for cakePanel"
       else
@@ -42,10 +44,7 @@ jcakedev.plugins.panel =
       panel = me.pluginManager.getComponent $(@)
 
       if panel?
-        if panel.modal
-          me.pluginManager.lockContent -> panel.show()
-        else
-          panel.show()
+        panel.show()
 
   hide: ($obj) ->
     me = @
@@ -55,7 +54,15 @@ jcakedev.plugins.panel =
       
       if panel?
         panel.hide()
-        me.pluginManager.unlockContent() if panel.modal
+
+  setTitle: ($obj, title) ->
+    me = @
+
+    $obj.each ->
+      panel = me.pluginManager.getComponent $(@)
+      
+      if panel?
+        panel.setTitle title
 
 class Panel
   constructor: (@el, @title, @modal, @draggable, @closable, @width, @height) ->
@@ -67,42 +74,62 @@ class Panel
     @panel.append @header
     @panel.append @el
 
+    if @modal
+      @wrapper = $ "<div class='-cakedev-panel-wrapper' />"
+      @wrapper.append "<div class='-cakedev-panel-wrapper-bg' />"
+      @wrapper.insertBefore @panel
+      
+      $wrapperContent = $ "<div class='-cakedev-panel-wrapper-content' />"
+      @wrapper.append $wrapperContent
+      $wrapperContent.append @panel
+
     @panel.css "width", @width
     @panel.css "height", @height
     @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
     @draggingOffset = null
 
-    @setTitle() if @title? and typeof @title is "string"
-    @setDraggable @draggable
+    @setTitle @title
     @setClosable @closable
 
-  setTitle: ->
-    @header.addClass "-cakedev-panel-titlebar"
-    @header.append "<h1>#{@title}</h1>"
+  setTitle: (title) ->
+    if title? and typeof title is "string"
+      @usingTitleBar = yes
+
+      if @header.hasClass "-cakedev-panel-titlebar"
+        @header.children("h1").text title
+      else
+        @header.addClass "-cakedev-panel-titlebar"
+        @header.append "<h1>#{title}</h1>"
+    else
+      @usingTitleBar = no
+
+      @header.removeClass "-cakedev-panel-titlebar"
+      @header.children("h1").remove()
+
+    @setDraggable @draggable
 
   onMousemove: (event) ->
     if @draggingOffset?
-      @panel.addClass "-cakedev-draggable" if not @panel.hasClass "-cakedev-draggable"
-
       @panel.offset
         top: event.pageY - @draggingOffset.top
         left: event.pageX - @draggingOffset.left
 
   setDraggable: (allowDrag) ->
-    if allowDrag
+    @header.removeClass "-cakedev-draggable"
+    @header.off "mousedown"
+
+    if allowDrag and @usingTitleBar
       me = this
+
       @header.addClass "-cakedev-draggable"
 
-      @panel.on "mousedown", (event) ->
+      @header.on "mousedown", (event) ->
         me.draggingOffset =
           top: event.pageY - me.panel.offset().top
           left: event.pageX - me.panel.offset().left
 
         event.preventDefault()
-    else
-      @panel.removeClass "-cakedev-draggable"
-      @panel.off "mousedown"
 
   setClosable: (allowClose) ->
     $closeBtn = @header.children ".-cakedev-close-button"
@@ -124,10 +151,26 @@ class Panel
     $closeBtn
 
   show: ->
-    @panel.show()
+    if @modal
+      @showModal()
+    else
+      @panel.show()
 
   hide: ->
+    if @modal
+      @hideModal()
+    else
+      @panel.hide()
+
+  showModal: (callback) ->
+    me = this
+
+    @wrapper.fadeIn "fast", ->
+      me.panel.show()
+
+  hideModal: (callback) ->
     @panel.hide()
+    @wrapper.fadeOut "fast"
 
 $(document).on "mousemove", (event) ->
   for cmp in jcakedev.components
@@ -138,4 +181,3 @@ $(document).on "mouseup", ->
   for cmp in jcakedev.components
     if cmp instanceof Panel
       cmp.draggingOffset = null
-      cmp.panel.removeClass "-cakedev-draggable"
