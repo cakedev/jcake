@@ -67,25 +67,25 @@ jcakedev.plugins.panel =
 class Panel
   constructor: (@el, @title, @modal, @draggable, @closable, @width, @height) ->
     @panel = $ "<div class='-cakedev-panel' />"
-    @panel.insertBefore @el
+
+    if @modal
+      @wrapper = $ "<div class='-cakedev-panel-wrapper' />"
+      @wrapper.append "<div class='-cakedev-panel-wrapper-bg' />"
+      @wrapper.insertBefore @el
+      
+      $wrapperContent = $ "<div class='-cakedev-panel-wrapper-content' />"
+      @wrapper.append $wrapperContent
+      $wrapperContent.append @panel
+    else
+      @panel.insertBefore @el
 
     @header = $ "<div class='-cakedev-panel-header' />"
 
     @panel.append @header
     @panel.append @el
 
-    if @modal
-      @wrapper = $ "<div class='-cakedev-panel-wrapper' />"
-      @wrapper.append "<div class='-cakedev-panel-wrapper-bg' />"
-      @wrapper.insertBefore @panel
-      
-      $wrapperContent = $ "<div class='-cakedev-panel-wrapper-content' />"
-      @wrapper.append $wrapperContent
-      $wrapperContent.append @panel
-
     @panel.css "width", @width
     @panel.css "height", @height
-    @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
     @draggingOffset = null
 
@@ -156,6 +156,8 @@ class Panel
     else
       @panel.show()
 
+    @centerPanelX()
+
   hide: ->
     if @modal
       @hideModal()
@@ -171,6 +173,11 @@ class Panel
   hideModal: (callback) ->
     @panel.hide()
     @wrapper.fadeOut "fast"
+
+  centerPanelX: ->
+    @panel.css "top", "100px"
+    @panel.css "left", "50%"
+    @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
 $(document).on "mousemove", (event) ->
   for cmp in jcakedev.components
