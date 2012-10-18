@@ -27,7 +27,7 @@ jcakedev.plugins.tooltip =
     hMargin = if params.hMargin? then params.hMargin else 10
     vMargin = if params.vMargin? then params.vMargin else 6
     animate = if params.animate? then params.animate else yes
-    animationSpeed = if params.animationSpeed? then params.animationSpeed else 150
+    animationSpeed = if params.animationSpeed? then params.animationSpeed else 200
 
     $obj.each ->
       tooltip = new Tooltip $(@), text, direction, hMargin, vMargin, animate, animationSpeed
@@ -43,35 +43,44 @@ class Tooltip
     @el.on "mouseleave", ->
       me.hide()
 
+  animationMargin: 25,
+
   setText: (text) ->
-    @tooltip.children("p").text text
+    @text = text
+    @setTooltipText()
+
+  setTooltipText: ->
+    @tooltip.children("p").text @text
 
   setDirection: (direction) ->
     @direction = direction
+    @setTooltipDirection()
 
+  setTooltipDirection: ->
     $arrow = @tooltip.children "span"
-    $arrow.removeClass()
-    $arrow.addClass "-cakedev-arrow"
+    $arrow.removeClass().addClass "-cakedev-arrow"
 
-    switch direction
-      when "left" then $arrow.addClass "-cakedev-arrow-right-black"
-      when "right" then $arrow.addClass "-cakedev-arrow-left-black"
-      when "top" then $arrow.addClass "-cakedev-arrow-down-black"
-      else $arrow.addClass "-cakedev-arrow-up-black"
+    switch @direction
+      when "left"
+        $arrow.addClass "-cakedev-arrow-right-black"
+        @setToLeft()
+      when "right"
+        $arrow.addClass "-cakedev-arrow-left-black"
+        @setToRight()
+      when "top"
+        $arrow.addClass "-cakedev-arrow-down-black"
+        @setToTop()
+      else
+        $arrow.addClass "-cakedev-arrow-up-black"
+        @setToBottom()
 
   show: ->
     if not @tooltip?
       @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
       $("body").append @tooltip
 
-      @setText @text
-      @setDirection @direction
-
-    switch @direction
-      when "left" then @setToLeft()
-      when "right" then @setToRight()
-      when "top" then @setToTop()
-      else @setToBottom()
+    @setTooltipText()
+    @setTooltipDirection()
 
   hide: ->
     if @animate
@@ -88,32 +97,37 @@ class Tooltip
   setToTop: ->
     top = @el.offset().top - @tooltip.outerHeight() - @vMargin
     left = @el.offset().left + parseInt(@el.outerWidth() / 2, 10) - parseInt(@tooltip.outerWidth() / 2, 10)
+    @tooltip.css "margin-top", "-#{@animationMargin}px"
 
     @showTooltip top, left
 
   setToRight: ->
     top = @el.offset().top + parseInt(@el.outerHeight() / 2, 10) - parseInt(@tooltip.outerHeight() / 2, 10)
     left = @el.offset().left + @el.outerWidth() + @hMargin
+    @tooltip.css "margin-left", "#{@animationMargin}px"
 
     @showTooltip top, left
 
   setToBottom: ->
     top = @el.offset().top + @el.outerHeight() + @vMargin
     left = @el.offset().left + parseInt(@el.outerWidth() / 2, 10) - parseInt(@tooltip.outerWidth() / 2, 10)
+    @tooltip.css "margin-top", "#{@animationMargin}px"
     
     @showTooltip top, left
 
   setToLeft: ->
     top = @el.offset().top + parseInt(@el.outerHeight() / 2, 10) - parseInt(@tooltip.outerHeight() / 2, 10)
     left = @el.offset().left - @tooltip.outerWidth() - @hMargin
+    @tooltip.css "margin-left", "-#{@animationMargin}px"
 
     @showTooltip top, left
 
   showTooltip: (top, left) ->
-    @tooltip.css("top", top + "px");
-    @tooltip.css("left", left + "px");
+    @tooltip.css { top: "#{top}px", left: "#{left}px" }
+
+    visibleProperties = { opacity: 1, margin: "0px" }
 
     if @animate
-      @tooltip.stop().animate { opacity: 0.80 }, @animationSpeed
+      @tooltip.stop().animate visibleProperties, @animationSpeed
     else
-      @tooltip.show()
+      @tooltip.css(visibleProperties).show()
