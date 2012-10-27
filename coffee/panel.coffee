@@ -66,6 +66,7 @@ jcakedev.plugins.panel =
 
 class Panel
   constructor: (@el, @title, @modal, @draggable, @closable, @width, @height) ->
+    me = @
     @panel = $ "<div class='-cakedev-panel' />"
 
     if @modal
@@ -76,6 +77,10 @@ class Panel
       $wrapperContent = $ "<div class='-cakedev-panel-wrapper-content' />"
       @wrapper.append $wrapperContent
       $wrapperContent.append @panel
+
+      $wrapperContent.on "click", (event) ->
+        if $(event.target).hasClass "-cakedev-panel-wrapper-content"
+          me.hide() if me.closable
     else
       @panel.insertBefore @el
 
@@ -83,6 +88,7 @@ class Panel
 
     @panel.append @header
     @panel.append @el
+    @panel.append "<div class='-cakedev-bottom-margin' />"
 
     @panel.css "width", @width
     @panel.css "height", @height
@@ -144,7 +150,7 @@ class Panel
   getCloseButton: ->
     me = @
 
-    $closeBtn = $ "<button class='-cakedev-close-button'>&times;</button>"
+    $closeBtn = $ "<button class='-cakedev-close-button' />"
     $closeBtn.on "click", ->
       me.el.cakePanel "hide"
 
@@ -156,7 +162,7 @@ class Panel
     else
       @panel.show()
 
-    @centerPanelX()
+    @centerPanel()
 
   hide: ->
     if @modal
@@ -167,15 +173,21 @@ class Panel
   showModal: (callback) ->
     me = this
 
+    $("body").css "overflow", "hidden"
+
     @wrapper.fadeIn "fast", ->
       me.panel.show()
 
   hideModal: (callback) ->
     @panel.hide()
-    @wrapper.fadeOut "fast"
+    @wrapper.fadeOut "fast", ->
+      if not $(".-cakedev-panel-wrapper:visible").length
+        $("body").css "overflow", "visible"
 
-  centerPanelX: ->
-    @panel.css "top", "100px"
+  centerPanel: ->
+    @panel.css "top", "50%"
+    @panel.css "margin-top", "-#{Math.round(@panel.height() / 2)}px"
+
     @panel.css "left", "50%"
     @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
