@@ -30,8 +30,9 @@ jcakedev.plugins.panel =
     modal = if params.modal? then params.modal else yes
     draggable = if params.draggable? then params.draggable else yes
     closable = if params.closable? then params.closable else yes
-    width = if params.width? then "#{params.width}px" else "auto"
-    height = if params.height? then "#{params.height}px" else "auto"
+    width = if params.width? then "#{params.width}px" else null
+    height = if params.height? then "#{params.height}px"  else null
+    position = if params.position is "fixed" then "fixed" else "absolute"
 
     $obj.each ->
       panel = new Panel $(@), title, modal, draggable, closable, width, height
@@ -65,9 +66,10 @@ jcakedev.plugins.panel =
         panel.setTitle title
 
 class Panel
-  constructor: (@el, @title, @modal, @draggable, @closable, @width, @height) ->
+  constructor: (@el, @title, @modal, @draggable, @closable, @width, @height, @position) ->
     me = @
     @panel = $ "<div class='-cakedev-panel' />"
+    @panel.css "position", @position
 
     if @modal
       @wrapper = $ "<div class='-cakedev-panel-wrapper' />"
@@ -79,21 +81,25 @@ class Panel
       $wrapperContent.append @panel
 
       $wrapperContent.on "click", (event) ->
-        if $(event.target).hasClass "-cakedev-panel-wrapper-content"
-          me.hide() if me.closable
+        if me.closable and $(event.target).hasClass "-cakedev-panel-wrapper-content"
+          me.hide()
     else
       @panel.insertBefore @el
 
     @header = $ "<div class='-cakedev-panel-header' />"
 
     @panel.append @header
-    @panel.append @el
-    @panel.append "<div class='-cakedev-bottom-margin' />"
 
-    @panel.css "width", @width
-    @panel.css "height", @height
+    @content = $ "<div class='-cakedev-panel-content' />"
+    @panel.append @content
+    @content.append @el
+
+    @content.css "width", @width if @width?
+    @content.css "height", @height if @height?
 
     @draggingOffset = null
+
+    @panel.css("position", "fixed") if not modal
 
     @setTitle @title
     @setClosable @closable
@@ -116,10 +122,32 @@ class Panel
     @setDraggable @draggable
 
   onMousemove: (event) ->
-    if @draggingOffset?
+    if @dragging
+      top = event.pageY - @draggingOffset.top
+      left = event.pageX - @draggingOffset.left
+
+      containerHeight = @getContainerHeight()
+      containerWidth = @getContainerWidth()
+
+      if top < 0
+        top = 0
+      else if top + @panel.outerHeight() > containerHeight
+        top = containerHeight - @panel.outerHeight()
+
+      if left < 0
+        left = 0
+      else if left + @panel.outerWidth() > containerWidth
+        left = containerWidth - @panel.outerWidth()
+
       @panel.offset
-        top: event.pageY - @draggingOffset.top
-        left: event.pageX - @draggingOffset.left
+        top: top
+        left: left
+
+  getContainerHeight: ->
+    return (if @modal then @wrapper.height() else $(document).height()) - 1
+
+  getContainerWidth: ->
+    return (if @modal then @wrapper.width() else $(document).width()) - 1
 
   setDraggable: (allowDrag) ->
     @header.removeClass "-cakedev-draggable"
@@ -131,11 +159,16 @@ class Panel
       @header.addClass "-cakedev-draggable"
 
       @header.on "mousedown", (event) ->
+        event.preventDefault()
+
         me.draggingOffset =
           top: event.pageY - me.panel.offset().top
           left: event.pageX - me.panel.offset().left
 
-        event.preventDefault()
+        me.setDragging yes
+
+  setDragging: (dragging) ->
+    @dragging = dragging
 
   setClosable: (allowClose) ->
     $closeBtn = @header.children ".-cakedev-close-button"
@@ -199,4 +232,4 @@ $(document).on "mousemove", (event) ->
 $(document).on "mouseup", ->
   for cmp in jcakedev.components
     if cmp instanceof Panel
-      cmp.draggingOffset = null
+      cmp.setDragging no

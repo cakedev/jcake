@@ -10,8 +10,7 @@
     .-cakedev-panel-header {
         .-cakedev-close-button {
             cursor: pointer;
-            margin: 12px;
-            padding: 10px;
+            margin: 17px;
             right: 0px;
             top: 0px;
             position: absolute;
@@ -22,10 +21,7 @@
         @include rounded(6px, 6px, 0px, 0px);
         @include shadowInside(0px, 1px, 0px, 0px, #fff);
 
-        background: {
-            color: #ececec;
-            repeat: repeat-x;
-        }
+        background-color: #ececec;
         border-bottom: 1px solid #cacaca;
         font-size: 16px;
         text-shadow: 0px 1px 0px #fff;
@@ -61,11 +57,8 @@
             cursor: move;
         }
     }
-    .-cakedev-bottom-margin {
-        height: 50px;
-        position: absolute;
-        top: 100%;
-        width: 100%;
+    .-cakedev-panel-content {
+        overflow: auto;
     }
 
     &.-cakedev-draggable {
