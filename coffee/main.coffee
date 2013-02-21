@@ -1,14 +1,14 @@
 ###
-jCaKeDev 1.3.1
-cakedevp.github.com/jcakedev
+jcake
+cakedevp.github.com/jcake/
 ###
 
-jcakedev =
+jcake =
   plugins: {}
   components: []
 
   getComponent: ($el) ->
-    id = $el.data "cakeId"
+    id = $el.data "jcakeId"
     component = null
 
     for comp in @components
@@ -20,7 +20,7 @@ jcakedev =
 
   addComponent: (comp) ->
     comp.id = @newID()
-    comp.el.data "cakeId", comp.id
+    comp.el.data "jcakeId", comp.id
     @components.push comp
 
   removeComponent: (id) ->

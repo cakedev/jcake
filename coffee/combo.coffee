@@ -1,4 +1,4 @@
-jcakedev.plugins.combo =
+jcake.plugins.combo =
   pluginManager: null
 
   init: (pm) ->
@@ -61,13 +61,13 @@ jcakedev.plugins.combo =
 class Combo
   constructor: (@el, @options, @delegate) ->
     @selectedIndex = 0
-    @el.addClass "-cakedev-combo"
+    @el.addClass "jcake-combo"
 
-    $comboElement = $ "<table class='-cakedev-combo-element' />"
+    $comboElement = $ "<table class='jcake-combo-element' />"
     $comboElement.append(
       "<tr>" +
-        "<td class='-cakedev-combo-optionText'></td>" +
-        "<td class='-cakedev-combo-arrow'><span class='-cakedev-arrow -cakedev-arrow-down-black'></span></td>" +
+        "<td class='jcake-combo-optionText'></td>" +
+        "<td class='jcake-combo-arrow'><span class='jcake-arrow jcake-arrow-down-black'></span></td>" +
       "</tr>"
     )
 
@@ -85,14 +85,14 @@ class Combo
     $comboElement.on "mouseleave", (event) ->
       $target = if event.toElement? then $(event.toElement) else $(event.relatedTarget)
 
-      if (not $target.hasClass("-cakedev-combo-list-container") and not $target.closest(".-cakedev-combo-list-container").length)
+      if (not $target.hasClass("jcake-combo-list-container") and not $target.closest(".jcake-combo-list-container").length)
         me.hideList yes
         me.setFocus no
 
       yes
 
   showList: (animate) ->
-    $el = @el.children(".-cakedev-combo-list-container")
+    $el = @el.children(".jcake-combo-list-container")
     $el.stop().show()
     if animate
       $el.animate { opacity: 1.0 }, 200
@@ -100,7 +100,7 @@ class Combo
       $el.css "opacity", 1.0
 
   hideList: (animate) ->
-    $el = @el.children(".-cakedev-combo-list-container")
+    $el = @el.children(".jcake-combo-list-container")
     if animate
       $el.stop().animate { opacity: 0 }, 200, -> $el.hide()
     else
@@ -109,7 +109,7 @@ class Combo
 
   setOptions: ->
     me = @
-    $listContainer = $ "<div class='-cakedev-combo-list-container' />"
+    $listContainer = $ "<div class='jcake-combo-list-container' />"
     $list = $ "<ul />"
 
     for option in @options
@@ -132,7 +132,7 @@ class Combo
     $listContainer.on "mouseleave", (event) ->
       $target = if event.toElement? then $(event.toElement) else $(event.relatedTarget)
 
-      if (not $target.hasClass("-cakedev-combo-element") and not $target.closest(".-cakedev-combo-element").length)
+      if (not $target.hasClass("jcake-combo-element") and not $target.closest(".jcake-combo-element").length)
         me.hideList yes
         me.setFocus no
 
@@ -141,17 +141,17 @@ class Combo
     @el.append $listContainer
 
   setCurrentOption: ->
-    @el.children("table").find(".-cakedev-combo-optionText").text @options[@selectedIndex].text
+    @el.children("table").find(".jcake-combo-optionText").text @options[@selectedIndex].text
 
-    $options = @el.children(".-cakedev-combo-list-container").children("ul").children "li"
-    $options.removeClass "-cakedev-combo-selectedOption"
-    $options.eq(@selectedIndex).addClass "-cakedev-combo-selectedOption"
+    $options = @el.children(".jcake-combo-list-container").children("ul").children "li"
+    $options.removeClass "jcake-combo-selectedOption"
+    $options.eq(@selectedIndex).addClass "jcake-combo-selectedOption"
 
   setFocus: (focus) ->
     if focus
-      @el.children(".-cakedev-combo-element").addClass "-cakedev-combo-focused"
+      @el.children(".jcake-combo-element").addClass "jcake-combo-focused"
     else
-      @el.children(".-cakedev-combo-element").removeClass "-cakedev-combo-focused"
+      @el.children(".jcake-combo-element").removeClass "jcake-combo-focused"
 
   setValue: (value) ->
     if @getValue() isnt value

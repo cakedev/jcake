@@ -1,4 +1,4 @@
-jcakedev.plugins.table =
+jcake.plugins.table =
   pluginManager: null
 
   init: (pm) ->
@@ -64,15 +64,15 @@ class Table
   constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage, @onEdit, @onErase) ->
     @loading = no
     @currentPage = 0
-    @el.addClass "-cakedev-table"
+    @el.addClass "jcake-table"
 
-    $wrapper = $ "<div class='-cakedev-table-wrapper' />"
-    $records = $ "<table class='-cakedev-table-records' />"
-    $pages = $ "<div class='-cakedev-table-pages' />"
+    $wrapper = $ "<div class='jcake-table-wrapper' />"
+    $records = $ "<table class='jcake-table-records' />"
+    $pages = $ "<div class='jcake-table-pages' />"
 
     $wrapper.append $records
-    $wrapper.append "<div class='-cakedev-table-loading' />"
-    $wrapper.append "<div class='-cakedev-table-message'>#{@emptyMessage}</div>"
+    $wrapper.append "<div class='jcake-table-loading' />"
+    $wrapper.append "<div class='jcake-table-message'>#{@emptyMessage}</div>"
     @el.append $wrapper
     @el.append $pages
 
@@ -87,10 +87,10 @@ class Table
     setData []
 
   showEmptyMessage: ->
-    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-message").show()
+    @el.children(".jcake-table-wrapper").children(".jcake-table-message").show()
 
   hideEmptyMessage: ->
-    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-message").hide()
+    @el.children(".jcake-table-wrapper").children(".jcake-table-message").hide()
 
   getValueWithFormat: (field, value) ->
     if typeof @formats[field] is "function"
@@ -100,7 +100,7 @@ class Table
     if value? then value else ""
 
   setRecords: ->
-    $records = @el.find ".-cakedev-table-records"
+    $records = @el.find ".jcake-table-records"
     $records.empty()
 
     @setHeaders()
@@ -115,7 +115,7 @@ class Table
           break
 
         $record = $ "<tr />";
-        $record.append "<td class='-cakedev-table-recordActions' />"
+        $record.append "<td class='jcake-table-recordActions' />"
 
         for field in @fields
           value = @getValueWithFormat field, @data[i][field]
@@ -142,17 +142,17 @@ class Table
       fieldName = if @fieldNames[field]? then @fieldNames[field] else field
       $headers.append "<th>#{fieldName}</th>"
 
-    @el.find(".-cakedev-table-records").append $headers
+    @el.find(".jcake-table-records").append $headers
 
   setPages: ->
     me = @
-    $pages = @el.children ".-cakedev-table-pages"
+    $pages = @el.children ".jcake-table-pages"
     $pages.empty()
 
     pagesCount = Math.ceil(@data.length / @maxRecords)
 
     for i in [0...pagesCount]
-      $page = $ "<a class='-cakedev-table-page' href='#'>#{i + 1}</a>"
+      $page = $ "<a class='jcake-table-page' href='#'>#{i + 1}</a>"
       $page.data "pageIndex", i
 
       $page.on "click", ->
@@ -163,7 +163,7 @@ class Table
       
       $pages.append $page
 
-    $pages.children(".-cakedev-table-page").eq(@currentPage).addClass "-cakedev-table-currentPage"
+    $pages.children(".jcake-table-page").eq(@currentPage).addClass "jcake-table-currentPage"
 
     if @data.length
       @setNavigationControls()
@@ -171,7 +171,7 @@ class Table
 
   setNavigationControls: ->
     me = @
-    $pages = @el.children ".-cakedev-table-pages"
+    $pages = @el.children ".jcake-table-pages"
 
     $previous = $ "<a href='#'>&laquo; Anterior</a>"
     $next = $ "<a href='#'>Siguiente &raquo;</a>"
@@ -205,7 +205,7 @@ class Table
     end = beginning + @maxRecords
     end = @data.length if end > @data.length
 
-    @el.children(".-cakedev-table-pages").append "<span class='-cakedev-table-info'>Mostrando #{beginning + 1} a #{end} de #{@data.length}</span>"
+    @el.children(".jcake-table-pages").append "<span class='jcake-table-info'>Mostrando #{beginning + 1} a #{end} de #{@data.length}</span>"
 
   setPage: (index) ->
     @currentPage = index
@@ -215,13 +215,13 @@ class Table
     no
 
   setEditable: ->
-    $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    $actions = @el.find(".jcake-table-records").find ".jcake-table-recordActions"
     currentIndex = @currentPage * @maxRecords
 
     me = @
     
     for i in [0...$actions.length]
-      $action = $ "<span class='-cakedev-table-action -cakedev-edit-icon' />"
+      $action = $ "<span class='jcake-table-action jcake-edit-icon' />"
       $action.data "cakedevIndex", currentIndex
       $action.on "click", ->
         me.raiseOnEdit $(@).data("cakedevIndex")
@@ -234,13 +234,13 @@ class Table
       @onEdit.call @el, @data[index], index
 
   setErasable: ->
-    $actions = @el.find(".-cakedev-table-records").find ".-cakedev-table-recordActions"
+    $actions = @el.find(".jcake-table-records").find ".jcake-table-recordActions"
     currentIndex = @currentPage * @maxRecords
 
     me = @
     
     for i in [0...$actions.length]
-      $action = $ "<span class='-cakedev-table-action -cakedev-trash-icon' />"
+      $action = $ "<span class='jcake-table-action jcake-trash-icon' />"
       $action.data "cakedevIndex", currentIndex
       $action.on "click", ->
         me.raiseOnErase $(@).data("cakedevIndex")
@@ -253,16 +253,16 @@ class Table
       @onErase.call @el, @data[index], index
 
   clearRecords: ->
-    @el.find(".-cakedev-table-records").find("tr").not(":first").remove()
-    @el.children(".-cakedev-table-pages").empty()
+    @el.find(".jcake-table-records").find("tr").not(":first").remove()
+    @el.children(".jcake-table-pages").empty()
     @hideEmptyMessage()
 
   setLoading: ->
     @clearRecords()
-    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-loading").show()
+    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").show()
     @loading = yes
 
   removeLoading: ->
-    @el.children(".-cakedev-table-wrapper").children(".-cakedev-table-loading").hide()
+    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").hide()
     @setRecords()
     @loading = no

@@ -1,4 +1,4 @@
-.-cakedev-tooltip {
+.jcake-tooltip {
     @include linearGradient(#333, #000);
     @include rounded(3px, 3px, 3px, 3px);
     @include opacity(0);
@@ -14,11 +14,11 @@
         margin: 0px;
         padding: 0px;
     }
-    .-cakedev-arrow {
+    .jcake-arrow {
         position: absolute;
         z-index: 999;
     }
-    .-cakedev-arrow-up-black {
+    .jcake-arrow-up-black {
         @include opacity(80);
 
         left: 50%;
@@ -28,17 +28,17 @@
         }
         top: 0px;
     }
-    .-cakedev-arrow-right-black {
+    .jcake-arrow-right-black {
         left: 100%;
         margin-top: -3px;
         top: 50%;
     }
-    .-cakedev-arrow-down-black {
+    .jcake-arrow-down-black {
         left: 50%;
         margin-left: -3px;
         top: 100%;
     }
-    .-cakedev-arrow-left-black {
+    .jcake-arrow-left-black {
         left: 0px;
         margin: {
             left: -4px;

@@ -1,4 +1,4 @@
 if jQuery?
-  jcakedev.init jQuery
+  jcake.init jQuery
 else
   console.log "jQuery not found"

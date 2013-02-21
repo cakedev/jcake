@@ -1,4 +1,4 @@
-jcakedev.plugins.attachable =
+jcake.plugins.attachable =
   pluginManager: null  
 
   init: (pm) ->
@@ -40,29 +40,29 @@ class Attachable
 $(document).on "scroll", ->
   scrollTop = $(window).scrollTop()
 
-  for cmp in jcakedev.components
+  for cmp in jcake.components
     if not (cmp instanceof Attachable)
       continue
 
     $el = cmp.el
 
-    if not $el.hasClass("-cakedev-attachable") and scrollTop > (cmp.top - cmp.margin)
+    if not $el.hasClass("jcake-attachable") and scrollTop > (cmp.top - cmp.margin)
       cmp.originalWidth = $el.width "width"
       cmp.originalHeigh = $el.css "height"
 
       $el.css "width", $el.width()
       $el.css "height", $el.height()
 
-      $el.addClass "-cakedev-attachable"
-      $el.after "<div class='-cakedev-dummy' style='height: #{$el.outerHeight()}px; width: #{$el.outerWidth()}px;'></div>"
-    else if $el.hasClass("-cakedev-attachable") and scrollTop <= (cmp.top - cmp.margin)
-      $el.removeClass "-cakedev-attachable"
+      $el.addClass "jcake-attachable"
+      $el.after "<div class='jcake-dummy' style='height: #{$el.outerHeight()}px; width: #{$el.outerWidth()}px;'></div>"
+    else if $el.hasClass("jcake-attachable") and scrollTop <= (cmp.top - cmp.margin)
+      $el.removeClass "jcake-attachable"
 
-      $el.parent().children(".-cakedev-dummy").remove()
+      $el.parent().children(".jcake-dummy").remove()
       $el.css "width", cmp.originalWidth
       $el.css "height", cmp.originalHeigh
 
-    if $el.hasClass "-cakedev-attachable"
+    if $el.hasClass "jcake-attachable"
       $el.css "top", cmp.top
       $el.css "left", cmp.left
 

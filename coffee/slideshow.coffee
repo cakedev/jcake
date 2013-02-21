@@ -1,4 +1,4 @@
-jcakedev.plugins.slideshow = 
+jcake.plugins.slideshow = 
   pluginManager: null
 
   init: (pm) ->
@@ -48,7 +48,7 @@ class Slideshow
       @el.css "height", if isNaN(@height) then @height else "#{@height}px"
 
     @slides = @el.children "div"
-    @el.addClass "-cakedev-slideshow"
+    @el.addClass "jcake-slideshow"
     @height = @el.height()
 
     if not fixedHeight
@@ -63,7 +63,7 @@ class Slideshow
     for i in [0...@slides.length]
       $slide = @slides.eq i
 
-      $slide.addClass "-cakedev-slideshow-slide"
+      $slide.addClass "jcake-slideshow-slide"
       $slide.css "height", "#{height}px"
 
     @slides.not(":eq(0)").css "margin-left", "#{@el.width()}px"
@@ -75,8 +75,8 @@ class Slideshow
     width = @el.width()
     height = @el.height();
 
-    $arrowleft = $ "<div class='-cakedev-slideshow-arrowleft' />"
-    $arrowright = $ "<div class='-cakedev-slideshow-arrowright' />"
+    $arrowleft = $ "<div class='jcake-slideshow-arrowleft' />"
+    $arrowright = $ "<div class='jcake-slideshow-arrowright' />"
 
     @el.append $arrowleft
     @el.append $arrowright

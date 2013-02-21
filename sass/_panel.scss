@@ -1,4 +1,4 @@
-.-cakedev-panel {
+.jcake-panel {
     @include rounded(6px, 6px, 6px, 6px);
     @include shadows(0px, 4px, 12px, 0px, rgba(0, 0, 0, 0.4), 0px, 1px, 0px, 0px, #fff);
 
@@ -7,8 +7,8 @@
     left: 50%;
     position: absolute;
 
-    .-cakedev-panel-header {
-        .-cakedev-close-button {
+    .jcake-panel-header {
+        .jcake-close-button {
             cursor: pointer;
             margin: 17px;
             right: 0px;
@@ -16,7 +16,7 @@
             position: absolute;
         }
     }
-    .-cakedev-panel-titlebar {
+    .jcake-panel-titlebar {
         @include linearGradient(#f5f5f5, #e3e3e3);
         @include rounded(6px, 6px, 0px, 0px);
         @include shadowInside(0px, 1px, 0px, 0px, #fff);
@@ -38,7 +38,7 @@
             margin: 0px;
             padding: 8px 45px 8px 15px;
         }
-        .-cakedev-close-button {
+        .jcake-close-button {
             @include rounded(0px, 6px, 0px, 0px);
             @include shadowInside(1px, 0px, 0px, 0px, #fff);
 
@@ -53,20 +53,20 @@
                 background-color: #ececec;
             }
         }
-        &.-cakedev-draggable {
+        &.jcake-draggable {
             cursor: move;
         }
     }
-    .-cakedev-panel-content {
+    .jcake-panel-content {
         overflow: auto;
     }
 
-    &.-cakedev-draggable {
+    &.jcake-draggable {
         cursor: move;
     }
 }
 
-.-cakedev-panel-wrapper {
+.jcake-panel-wrapper {
     display: none;
     height: 100%;
     left: 0px;
@@ -75,14 +75,14 @@
     width: 100%;
     z-index: 996;
 
-    .-cakedev-panel-wrapper-bg {
+    .jcake-panel-wrapper-bg {
         @include opacity(50);
 
         background: #000;
         height: 100%;
         width: 100%;
     }
-    .-cakedev-panel-wrapper-content {
+    .jcake-panel-wrapper-content {
         height: 100%;
         left: 0px;
         margin-bottom: 100px;

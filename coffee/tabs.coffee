@@ -1,4 +1,4 @@
-jcakedev.plugins.tabs =
+jcake.plugins.tabs =
   pluginManager: null
 
   init: (pm) ->
@@ -32,11 +32,11 @@ class TabControl
   constructor: (@el, @direction) ->
     @currentTabIndex = 0
 
-    @el.addClass "-cakedev-tabs"
+    @el.addClass "jcake-tabs"
 
-    tabHeaderClass = if @direction is "bottom" then "-cakedev-tabHeader-bottom" else "-cakedev-tabHeader-top"
+    tabHeaderClass = if @direction is "bottom" then "jcake-tabHeader-bottom" else "jcake-tabHeader-top"
 
-    $tabHeadersContainer = $ "<div class='-cakedev-tabHeaders-container'></div>'"
+    $tabHeadersContainer = $ "<div class='jcake-tabHeaders-container'></div>'"
     $tabs = @el.children "div"
 
     if $tabs.length
@@ -44,12 +44,12 @@ class TabControl
 
       for i in [0...$tabs.length]
         $tab = $tabs.eq i
-        $tab.addClass "-cakedev-tab"
+        $tab.addClass "jcake-tab"
         
         tabTitle = if $tab.attr "title" then $tab.attr "title" else i
         $tab.removeAttr "title"
 
-        tabHeadersContent += "<td><span class='-cakedev-tabHeader #{tabHeaderClass}'>#{tabTitle}</span></td>"
+        tabHeadersContent += "<td><span class='jcake-tabHeader #{tabHeaderClass}'>#{tabTitle}</span></td>"
 
       if @direction is "bottom"
         @el.append $tabHeadersContainer
@@ -57,15 +57,15 @@ class TabControl
         @el.prepend $tabHeadersContainer
 
       $tabHeadersContainer.append "<table><tr>#{tabHeadersContent}</tr></table>"
-      $tabHeaders = $tabHeadersContainer.find ".-cakedev-tabHeader"
+      $tabHeaders = $tabHeadersContainer.find ".jcake-tabHeader"
 
       me = @
 
       for i in [0...$tabHeaders.length]
         $tabHeaders.eq(i).data "cakedevIndex", i
         $tabHeaders.eq(i).on "click", ->
-          $currentTabControl = $(@).closest ".-cakedev-tabs"
-          $headersContainer = $(@).closest ".-cakedev-tabHeaders-container"
+          $currentTabControl = $(@).closest ".jcake-tabs"
+          $headersContainer = $(@).closest ".jcake-tabHeaders-container"
 
           me.currentTabIndex = $(@).data "cakedevIndex"
           me.setCurrentTab()
@@ -74,8 +74,8 @@ class TabControl
       @setCurrentTab()
 
   setCurrentTab: ->
-    $headers = @el.children(".-cakedev-tabHeaders-container").find ".-cakedev-tabHeader"
-    $headers.removeClass "-cakedev-selected-tab"
-    $headers.eq(@currentTabIndex).addClass "-cakedev-selected-tab"
+    $headers = @el.children(".jcake-tabHeaders-container").find ".jcake-tabHeader"
+    $headers.removeClass "jcake-selected-tab"
+    $headers.eq(@currentTabIndex).addClass "jcake-selected-tab"
 
-    @el.children(".-cakedev-tab").hide().eq(@currentTabIndex).show()
+    @el.children(".jcake-tab").hide().eq(@currentTabIndex).show()

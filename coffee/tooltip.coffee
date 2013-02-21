@@ -1,4 +1,4 @@
-jcakedev.plugins.tooltip =
+jcake.plugins.tooltip =
   pluginManager: null  
 
   init: (pm) ->
@@ -58,25 +58,25 @@ class Tooltip
 
   setTooltipDirection: ->
     $arrow = @tooltip.children "span"
-    $arrow.removeClass().addClass "-cakedev-arrow"
+    $arrow.removeClass().addClass "jcake-arrow"
 
     switch @direction
       when "left"
-        $arrow.addClass "-cakedev-arrow-right-black"
+        $arrow.addClass "jcake-arrow-right-black"
         @setToLeft()
       when "right"
-        $arrow.addClass "-cakedev-arrow-left-black"
+        $arrow.addClass "jcake-arrow-left-black"
         @setToRight()
       when "top"
-        $arrow.addClass "-cakedev-arrow-down-black"
+        $arrow.addClass "jcake-arrow-down-black"
         @setToTop()
       else
-        $arrow.addClass "-cakedev-arrow-up-black"
+        $arrow.addClass "jcake-arrow-up-black"
         @setToBottom()
 
   show: ->
     if not @tooltip?
-      @tooltip = $ "<div class='-cakedev-tooltip'><p /><span /></div>"
+      @tooltip = $ "<div class='jcake-tooltip'><p /><span /></div>"
       $("body").append @tooltip
 
     @setTooltipText()
