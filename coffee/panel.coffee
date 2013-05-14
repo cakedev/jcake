@@ -1,75 +1,36 @@
-jcake.plugins.panel =
-  pluginManager: null  
+jcake.plugin(
+  "cakePanel"
+  [ "show", "hide", "setTitle", "setDraggable", "setClosable", "setCentered" ]
+  ($el, props) ->
+    props = if props? then props else {}
 
-  init: (pm) ->
-    @pluginManager = pm
-    me = @
+    title = props.title
+    modal = if props.modal? then props.modal else yes
+    draggable = if props.draggable? then props.draggable else yes
+    closable = if props.closable? then props.closable else yes
+    width = if props.width? then "#{props.width}px" else null
+    height = if props.height? then "#{props.height}px" else null
+    centered = if props.centered? then props.centered else yes
 
-    $.fn.cakePanel = (args...) ->
-      if typeof args[0] is "string"
-        action = args[0]
+    return new Panel $el, title, modal, draggable, closable, width, height, centered
+  ->
+    $(".x-jcake-panel").each ->
+      $el = $ @
 
-        switch action
-          when "show"
-            me.show @
-          when "hide"
-            me.hide @
-          when "setTitle"
-            me.setTitle @, args[1]
-          else
-            pm.notify "'#{action}' is not a valid action for cakePanel"
-      else
-        me.create @, if typeof args[0] is "object" then args[0] else {}
-      
-      @
-
-  create: ($obj, params) ->
-    me = @
-
-    title = params.title
-    modal = if params.modal? then params.modal else yes
-    draggable = if params.draggable? then params.draggable else yes
-    closable = if params.closable? then params.closable else yes
-    width = if params.width? then "#{params.width}px" else null
-    height = if params.height? then "#{params.height}px"  else null
-    position = if params.position is "fixed" then "fixed" else "absolute"
-
-    $obj.each ->
-      panel = new Panel $(@), title, modal, draggable, closable, width, height
-      me.pluginManager.addComponent panel
-
-  show: ($obj) ->
-    me = @
-
-    $obj.each ->
-      panel = me.pluginManager.getComponent $(@)
-
-      if panel?
-        panel.show()
-
-  hide: ($obj) ->
-    me = @
-
-    $obj.each ->
-      panel = me.pluginManager.getComponent $(@)
-      
-      if panel?
-        panel.hide()
-
-  setTitle: ($obj, title) ->
-    me = @
-
-    $obj.each ->
-      panel = me.pluginManager.getComponent $(@)
-      
-      if panel?
-        panel.setTitle title
+      $el.cakePanel
+        title: $el.data "title"
+        modal: $el.data "modal"
+        draggable: $el.data "draggable"
+        closable: $el.data "closable"
+        width: $el.data "width"
+        height: $el.data "height"
+        centered: $el.data "centered"
+)
 
 class Panel
-  constructor: (@el, @title, @modal, @draggable, @closable, @width, @height, @position) ->
+  constructor: (@el, @title, @modal, @draggable, @closable, @width, @height, @centered) ->
     me = @
     @panel = $ "<div class='jcake-panel' />"
-    @panel.css "position", @position
 
     if @modal
       @wrapper = $ "<div class='jcake-panel-wrapper' />"
@@ -87,6 +48,7 @@ class Panel
       @panel.insertBefore @el
 
     @header = $ "<div class='jcake-panel-header' />"
+    @header.append "<h1 />"
 
     @panel.append @header
 
@@ -94,66 +56,65 @@ class Panel
     @panel.append @content
     @content.append @el
 
-    @content.css "width", @width if @width?
-    @content.css "height", @height if @height?
+    @panel.css "width", @width if @width?
+    @panel.css "height", @height if @height?
 
     @draggingOffset = null
 
-    @panel.css("position", "fixed") if not modal
-
     @setTitle @title
     @setClosable @closable
-
-  setTitle: (title) ->
-    if title? and typeof title is "string"
-      @usingTitleBar = yes
-
-      if @header.hasClass "jcake-panel-titlebar"
-        @header.children("h1").text title
-      else
-        @header.addClass "jcake-panel-titlebar"
-        @header.append "<h1>#{title}</h1>"
-    else
-      @usingTitleBar = no
-
-      @header.removeClass "jcake-panel-titlebar"
-      @header.children("h1").remove()
-
     @setDraggable @draggable
 
-  onMousemove: (event) ->
-    if @dragging
-      top = event.pageY - @draggingOffset.top
-      left = event.pageX - @draggingOffset.left
+  # public methods
 
-      containerHeight = @getContainerHeight()
-      containerWidth = @getContainerWidth()
+  setTitle: (title) ->
+    if typeof title isnt "string"
+      title = ""
 
-      if top < 0
-        top = 0
-      else if top + @panel.outerHeight() > containerHeight
-        top = containerHeight - @panel.outerHeight()
+    @header.children("h1").text title
 
-      if left < 0
-        left = 0
-      else if left + @panel.outerWidth() > containerWidth
-        left = containerWidth - @panel.outerWidth()
+    return @el
 
-      @panel.offset
-        top: top
-        left: left
+  show: ->
+    if @modal
+      @showModal()
+    else
+      @panel.show()
 
-  getContainerHeight: ->
-    return (if @modal then @wrapper.height() else $(document).height()) - 1
+    if @centered
+      @centerPanel()
 
-  getContainerWidth: ->
-    return (if @modal then @wrapper.width() else $(document).width()) - 1
+    return @el
+
+  hide: ->
+    if @modal
+      @hideModal()
+    else
+      @panel.hide()
+
+    return @el
+
+  setClosable: (allowClose) ->
+    $closeBtn = @header.children ".jcake-close-button"
+
+    if allowClose
+      @header.addClass "jcake-closable"
+
+      if not $closeBtn.length
+        @header.append @getCloseButton()
+    else
+      @header.removeClass "jcake-closable"
+
+      if $closeBtn.length
+        $closeBtn.remove()
+
+    return @el
 
   setDraggable: (allowDrag) ->
     @header.removeClass "jcake-draggable"
     @header.off "mousedown"
 
-    if allowDrag and @usingTitleBar
+    if allowDrag
       me = this
 
       @header.addClass "jcake-draggable"
@@ -167,18 +128,33 @@ class Panel
 
         me.setDragging yes
 
+    return @el
+
+  setCentered: (center) ->
+    @centered = center
+
+    if @centered
+      @centerPanel()
+
+  # end
+
+  onMousemove: (event) ->
+    if @dragging
+      top = event.pageY - @draggingOffset.top
+      left = event.pageX - @draggingOffset.left
+
+      @panel.offset
+        top: top
+        left: left
+
+  getContainerHeight: ->
+    return (if @modal then @wrapper.height() else $(document).height()) - 1
+
+  getContainerWidth: ->
+    return (if @modal then @wrapper.width() else $(document).width()) - 1
+
   setDragging: (dragging) ->
     @dragging = dragging
-
-  setClosable: (allowClose) ->
-    $closeBtn = @header.children ".jcake-close-button"
-
-    if allowClose
-      if not $closeBtn.length
-        @header.append @getCloseButton()
-    else
-      if $closeBtn.length
-        $closeBtn.remove()
 
   getCloseButton: ->
     me = @
@@ -188,20 +164,6 @@ class Panel
       me.el.cakePanel "hide"
 
     $closeBtn
-
-  show: ->
-    if @modal
-      @showModal()
-    else
-      @panel.show()
-
-    @centerPanel()
-
-  hide: ->
-    if @modal
-      @hideModal()
-    else
-      @panel.hide()
 
   showModal: (callback) ->
     me = this
@@ -224,12 +186,13 @@ class Panel
     @panel.css "left", "50%"
     @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
 
-$(document).on "mousemove", (event) ->
-  for cmp in jcake.components
-    if cmp instanceof Panel
-      cmp.onMousemove.apply cmp, [ event ]
+$(document).ready ->
+  $(document).on "mousemove", (event) ->
+    jcake.eachCmp (cmp, id) ->
+      if cmp instanceof Panel
+        cmp.onMousemove event
 
-$(document).on "mouseup", ->
-  for cmp in jcake.components
-    if cmp instanceof Panel
-      cmp.setDragging no
+  $(document).on "mouseup", ->
+    jcake.eachCmp (cmp, id) ->
+      if cmp instanceof Panel
+        cmp.setDragging no

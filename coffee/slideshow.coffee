@@ -1,40 +1,31 @@
-jcake.plugins.slideshow = 
-  pluginManager: null
+jcake.plugin(
+  "cakeSlideshow"
+  []
+  ($el, props) ->
+    props = if props? then props else {}
+    
+    height = props.height
+    disableNavigation = if props.disableNavigation? then props.disableNavigation else no
+    animationSpeed = if props.animationSpeed? then props.animationSpeed else 400
+    autoNavigate = if props.autoNavigate? then props.autoNavigate else yes
+    delay = if props.delay? then props.delay else 2000
+    rotate = if props.rotate? then props.rotate else yes
+    navigationMargin = if props.navigationMargin? then props.navigationMargin else 20
 
-  init: (pm) ->
-    @pluginManager = pm
-    me = @
+    return new Slideshow $el, height, disableNavigation, animationSpeed, autoNavigate, delay, rotate, navigationMargin
+  ->
+    $(".x-jcake-slideshow").each ->
+      $el = $ @
 
-    $.fn.cakeSlideshow = (args...) ->
-      if typeof args[0] is "string"
-        action = args[0]
-
-        switch action
-          when "moveNext"
-            pm.notify "Not implemented yet"
-          when "movePrevious"
-            pm.notify "Not implemented yet"
-          else
-            pm.notify "'#{action}' is not a valid action for cakeSlideshow"
-      else
-        me.create @, if typeof args[0] is "object" then args[0] else {}
-      
-      @
-
-  create: ($obj, params) ->
-    height = params.height
-    disableNavigation = if params.disableNavigation? then params.disableNavigation else no
-    animationSpeed = if params.animationSpeed? then params.animationSpeed else 400
-    autoNavigate = if params.autoNavigate? then params.autoNavigate else yes
-    delay = if params.delay? then params.delay else 2000
-    rotate = if params.rotate? then params.rotate else yes
-    navigationMargin = if params.navigationMargin? then params.navigationMargin else 20
-
-    me = @
-
-    $obj.each ->
-      slideshow = new Slideshow $(@), height, disableNavigation, animationSpeed, autoNavigate, delay, rotate, navigationMargin
-      me.pluginManager.addComponent slideshow
+      $el.cakeSlideshow
+        height: $el.data "height"
+        disableNavigation: $el.data "disableNavigation"
+        animationSpeed: $el.data "animationSpeed"
+        autoNavigate: $el.data "autoNavigate"
+        delay: $el.data "delay"
+        rotate: $el.data "rotate"
+        navigationMargin: $el.data "navigationMargin"
+)
 
 class Slideshow
   constructor: (@el, @height, @disableNavigation, @animationSpeed, @autoNavigate, @delay, @rotate, @navigationMargin) ->

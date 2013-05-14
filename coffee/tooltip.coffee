@@ -1,37 +1,29 @@
-jcake.plugins.tooltip =
-  pluginManager: null  
+jcake.plugin(
+  "cakeTooltip"
+  []
+  ($el, props) ->
+    props = if props? then props else {}
+    
+    text = if props.text? then props.text else ""
+    direction = if props.direction? then props.direction else "bottom"
+    hMargin = if props.hMargin? then props.hMargin else 10
+    vMargin = if props.vMargin? then props.vMargin else 6
+    animate = if props.animate? then props.animate else yes
+    animationSpeed = if props.animationSpeed? then props.animationSpeed else 200
 
-  init: (pm) ->
-    @pluginManager = pm
-    me = @
+    return new Tooltip $el, text, direction, hMargin, vMargin, animate, animationSpeed
+  ->
+    $(".x-jcake-tooltip").each ->
+      $el = $ @
 
-    $.fn.cakeTooltip = (args...) ->
-      if typeof args[0] is "string"
-        action = args[0]
-
-        switch action
-          when "setText"
-            pm.notify "Not implemented yet"
-          else
-            pm.notify "'#{action}' is not a valid action for cakeTooltip"
-      else
-        me.create @, if typeof args[0] is "object" then args[0] else {}
-      
-      @
-
-  create: ($obj, params) ->
-    me = @
-
-    text = if params.text? then params.text else ""
-    direction = if params.direction? then params.direction else "bottom"
-    hMargin = if params.hMargin? then params.hMargin else 10
-    vMargin = if params.vMargin? then params.vMargin else 6
-    animate = if params.animate? then params.animate else yes
-    animationSpeed = if params.animationSpeed? then params.animationSpeed else 200
-
-    $obj.each ->
-      tooltip = new Tooltip $(@), text, direction, hMargin, vMargin, animate, animationSpeed
-      me.pluginManager.addComponent tooltip
+      $el.cakeTooltip
+        text: $el.data "text"
+        direction: $el.data "direction"
+        hMargin: $el.data "hMargin"
+        vMargin: $el.data "vMargin"
+        animate: $el.data "animate"
+        animationSpeed: $el.data "animationSpeed"
+)
 
 class Tooltip
   constructor: (@el, @text, @direction, @hMargin, @vMargin, @animate, @animationSpeed) ->
@@ -58,7 +50,7 @@ class Tooltip
 
   setTooltipDirection: ->
     $arrow = @tooltip.children "span"
-    $arrow.removeClass().addClass "jcake-arrow"
+    $arrow.removeClass().addClass "jcake-icon jcake-arrow"
 
     switch @direction
       when "left"

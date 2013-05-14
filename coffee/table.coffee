@@ -1,64 +1,23 @@
-jcake.plugins.table =
-  pluginManager: null
+jcake.plugin(
+  "cakeTable"
+  [ "setData", "setLoading", "removeLoading" ]
+  ($el, props) ->
+    props = if props? then props else {}
 
-  init: (pm) ->
-    @pluginManager = pm
-    me = @
+    fields = if props.fields? then props.fields else []
+    fieldNames = if props.fieldNames? then props.fieldNames else {}
+    data = if props.data? then props.data else []
+    maxRecords = if props.maxRecords? then props.maxRecords else 20
+    formats = if props.formats? then props.formats else {}
+    selectable = if props.selectable? then props.selectable else no
+    editable = if props.editable? then props.editable else no
+    erasable = if props.erasable? then props.erasable else no
+    emptyMessage = if props.emptyMessage? then props.emptyMessage else "..."
+    onEdit = props.onEdit
+    onErase = props.onErase
 
-    $.fn.cakeTable = (args...) ->
-      if typeof args[0] is "string"
-        action = args[0]
-
-        switch action
-          when "getSelected"
-            pm.notify "Not implemented yet"
-          when "setData"
-            me.setData @, args[1]
-          when "setLoading"
-            me.setLoading @
-          when "removeLoading"
-            me.removeLoading @
-          else
-            pm.notify "'#{action}' is not a valid action for cakeTable"
-      else
-        me.create @, if typeof args[0] is "object" then args[0] else {}
-      
-      @
-
-  create: ($obj, params) ->
-    me = @
-
-    fields = if params.fields? then params.fields else []
-    fieldNames = if params.fieldNames? then params.fieldNames else {}
-    data = if params.data? then params.data else []
-    maxRecords = if params.maxRecords? then params.maxRecords else 20
-    formats = if params.formats? then params.formats else {}
-    selectable = if params.selectable? then params.selectable else no
-    editable = if params.editable? then params.editable else no
-    erasable = if params.erasable? then params.erasable else no
-    emptyMessage = if params.emptyMessage? then params.emptyMessage else "..."
-    onEdit = params.onEdit
-    onErase = params.onErase
-
-    $obj.each ->
-      table = new Table $(@), fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage, onEdit, onErase
-      me.pluginManager.addComponent table
-
-  setData: ($obj, data) ->
-    if data instanceof Array
-      for i in [0...$obj.length]
-        table = @pluginManager.getComponent $obj.eq(i)
-        table.setData(data) if table?
-
-  setLoading: ($obj) ->
-    for i in [0...$obj.length]
-      table = @pluginManager.getComponent $obj.eq(i)
-      table.setLoading() if table?
-
-  removeLoading: ($obj) ->
-    for i in [0...$obj.length]
-      table = @pluginManager.getComponent $obj.eq(i)
-      table.removeLoading() if table?
+    return new Table $el, fields, fieldNames, data, maxRecords, formats, selectable, editable, erasable, emptyMessage, onEdit, onErase
+)
 
 class Table
   constructor: (@el, @fields, @fieldNames, @data, @maxRecords, @formats, @selectable, @editable, @erasable, @emptyMessage, @onEdit, @onErase) ->
@@ -78,10 +37,24 @@ class Table
 
     @setRecords()
 
+  # public methods
+
   setData: (data) ->
     @data = data
     @currentPage = 0
     @setRecords() if not @loading
+
+  setLoading: ->
+    @clearRecords()
+    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").show()
+    @loading = yes
+
+  removeLoading: ->
+    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").hide()
+    @setRecords()
+    @loading = no
+
+  # end
 
   clearData: ->
     setData []
@@ -256,13 +229,3 @@ class Table
     @el.find(".jcake-table-records").find("tr").not(":first").remove()
     @el.children(".jcake-table-pages").empty()
     @hideEmptyMessage()
-
-  setLoading: ->
-    @clearRecords()
-    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").show()
-    @loading = yes
-
-  removeLoading: ->
-    @el.children(".jcake-table-wrapper").children(".jcake-table-loading").hide()
-    @setRecords()
-    @loading = no

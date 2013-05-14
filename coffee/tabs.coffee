@@ -1,81 +1,76 @@
-jcake.plugins.tabs =
-  pluginManager: null
+jcake.plugin(
+  "cakeTabs"
+  [ "setTab", "getTab", "getCurrentIndex", "getCurrentTab" ]
+  ($el, props) ->
+    props = if props? then props else {}
 
-  init: (pm) ->
-    @pluginManager = pm
-    me = @
+    direction = if props.direction? then props.direction else "top"
 
-    $.fn.cakeTabs = (args...) ->
-      if typeof args[0] is "string"
-        action = args[0]
+    return new Tabs $el, direction
+  ->
+    $(".x-jcake-tabs").each ->
+      $el = $ @
 
-        switch action
-          when "getCurrent"
-            pm.notify "Not implemented yet"
-          else
-            pm.notify "'#{action}' is not a valid action for cakeTabs"
-      else
-        me.create @, if typeof args[0] is "object" then args[0] else {}
-      
-      @
+      $el.cakeTabs
+        direction: $el.data "direction"
+)
 
-  create: ($obj, params) ->
-    me = @
-
-    direction = if params.direction? then params.direction else "top"
-
-    $obj.each ->
-      tabControl = new TabControl $(@), direction
-      me.pluginManager.addComponent tabControl
-
-class TabControl
+class Tabs
   constructor: (@el, @direction) ->
-    @currentTabIndex = 0
-
     @el.addClass "jcake-tabs"
+    @tabs = @el.children "div"
+    @headers = $ "<ul class='jcake-tabs-headers clearfix' />"
 
-    tabHeaderClass = if @direction is "bottom" then "jcake-tabHeader-bottom" else "jcake-tabHeader-top"
+    $tabswrapper = $ "<div class='jcake-tabs-tabswrapper' />"
+    @el.append $tabswrapper
 
-    $tabHeadersContainer = $ "<div class='jcake-tabHeaders-container'></div>'"
-    $tabs = @el.children "div"
+    if direction is "bottom"
+      @headers.addClass "jcake-tabs-headers-bottom"
+      @el.append @headers
+    else
+      @headers.addClass "jcake-tabs-headers-top"
+      @el.prepend @headers
 
-    if $tabs.length
-      tabHeadersContent = ""
+    me = @
 
-      for i in [0...$tabs.length]
-        $tab = $tabs.eq i
-        $tab.addClass "jcake-tab"
-        
-        tabTitle = if $tab.attr "title" then $tab.attr "title" else i
-        $tab.removeAttr "title"
+    for i in [0...@tabs.length]
+      $tab = @tabs.eq(i).hide()
 
-        tabHeadersContent += "<td><span class='jcake-tabHeader #{tabHeaderClass}'>#{tabTitle}</span></td>"
+      $header = $ "<li class='jcake-tabs-header' />"
+      $header
+        .data("index", i)
+        .text($tab.attr("title"))
+        .on("click", ->
+          me.setTab $(@).data "index"
+        )
 
-      if @direction is "bottom"
-        @el.append $tabHeadersContainer
-      else
-        @el.prepend $tabHeadersContainer
+      @headers.append $header
 
-      $tabHeadersContainer.append "<table><tr>#{tabHeadersContent}</tr></table>"
-      $tabHeaders = $tabHeadersContainer.find ".jcake-tabHeader"
+      $tab.removeAttr("title")
+      $tabswrapper.append $tab
 
-      me = @
+    @setTab 0
 
-      for i in [0...$tabHeaders.length]
-        $tabHeaders.eq(i).data "cakedevIndex", i
-        $tabHeaders.eq(i).on "click", ->
-          $currentTabControl = $(@).closest ".jcake-tabs"
-          $headersContainer = $(@).closest ".jcake-tabHeaders-container"
+  setTab: (index) ->
+    if index > -1 and index < @tabs.length and index isnt @currentIndex
+      @currentIndex = index
 
-          me.currentTabIndex = $(@).data "cakedevIndex"
-          me.setCurrentTab()
+      $tabheaders = @headers.find ".jcake-tabs-header"
+      $tabheaders.removeClass "jcake-tabs-header-selected"
+      $tabheaders.eq(index).addClass "jcake-tabs-header-selected"
 
-      @currentTabIndex = 0
-      @setCurrentTab()
+      @tabs.hide()
+      @tabs.eq(index).show()
 
-  setCurrentTab: ->
-    $headers = @el.children(".jcake-tabHeaders-container").find ".jcake-tabHeader"
-    $headers.removeClass "jcake-selected-tab"
-    $headers.eq(@currentTabIndex).addClass "jcake-selected-tab"
+      @el.trigger "tabchange", [ @tabs.eq(index), index ]
 
-    @el.children(".jcake-tab").hide().eq(@currentTabIndex).show()
+    return @el
+
+  getTab: (index) ->
+    return @tabs.eq(index)
+
+  getCurrentIndex: ->
+    return @currentIndex
+
+  getCurrentTab: ->
+    return @tabs.eq(@currentIndex)

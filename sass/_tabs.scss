@@ -1,64 +1,73 @@
 .jcake-tabs {
-    background-color: #efefef;
-    padding: 1px 1px 1px 1px;
-
-    .jcake-tab {
+    .jcake-tabs-tabswrapper {
         background-color: #fff;
-        padding: 10px;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        position: relative;
+        z-index: 1;
     }
-    .jcake-tabHeader-top,
-    .jcake-tabHeader-bottom {
-        @include shadow(0px, 0px, 5px, 0px, #ccc);
 
-        background-color: #eee;
-        border: {
-            left: 1px solid #eee;
-            right: 1px solid #eee;
+    .jcake-tabs-headers {
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+        position: relative;
+        z-index: 2;
+
+        &.jcake-tabs-headers-bottom {
+            margin-top: -1px;
+
+            .jcake-tabs-header {
+                @include rounded(0px, 0px, 4px, 4px);
+
+                &:hover {
+                    border-top-color: #ccc;
+                }
+
+                &.jcake-tabs-header-selected {
+                    background-color: #fff;
+                    border-color: #ccc;
+                    border-top: 1px solid #fff;
+                    color: #555;
+                    cursor: auto;
+                }
+            }
         }
-        color: #aaa;
-        cursor: pointer;
-        display: block;
-        margin: 0px 0px 0px 7px;
-        padding: 5px 15px 5px 15px;
+        &.jcake-tabs-headers-top {
+            margin-bottom: -1px;
 
-        &:hover {
-            @include shadow(0px, 0px, 5px, 0px, #aaa);
+            .jcake-tabs-header {
+                @include rounded(4px, 4px, 0px, 0px);
 
-            border-color: #eee;
-            color: #888;
+                &:hover {
+                    border-bottom-color: #ccc;
+                }
+
+                &.jcake-tabs-header-selected {
+                    background-color: #fff;
+                    border-color: #ccc;
+                    border-bottom: 1px solid #fff;
+                    color: #555;
+                    cursor: auto;
+                }
+            }
         }
-    }
-    .jcake-tabHeader-top {
-        @include rounded(3px, 3px, 0px, 0px);
 
-        border-top: 1px solid #eee;
-        margin-top: 5px;
-    }
-    .jcake-tabHeader-bottom {
-        @include rounded(0px, 0px, 3px, 3px);
+        .jcake-tabs-header {
+            border: 1px solid transparent;
+            color: #aaa;
+            cursor: pointer;
+            float: left;
+            font: {
+                family: $fontfamily;
+                size: 14px;
+            }
+            margin-right: 3px;
+            padding: 10px 15px;
 
-        border-bottom: 1px solid #eee;
-        margin-top: 5px;
-    }
-    .jcake-selected-tab {
-        @include shadow(0px, 0px, 5px, 0px, #aaa);
-
-        background-color: #fff;
-        border-color: #fff;
-        color: #333;
-
-        &:hover {
-            border-color: #fff;
-            color: #333;
-        }
-    }
-    .jcake-tabHeaders-container {
-        table {
-            border-collapse: collapse;
-
-            td {
-                border-collapse: collapse;
-                padding: 0px;
+            &:hover {
+                background-color: #efefef;
+                color: #888;
             }
         }
     }

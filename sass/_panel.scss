@@ -1,60 +1,53 @@
 .jcake-panel {
     @include rounded(6px, 6px, 6px, 6px);
-    @include shadows(0px, 4px, 12px, 0px, rgba(0, 0, 0, 0.4), 0px, 1px, 0px, 0px, #fff);
+    @include shadow(0px, 4px, 12px, 0px, rgba(0, 0, 0, 0.4));
 
     background-color: #fff;
+    border: 1px solid #cacaca;
     display: none;
-    left: 50%;
     position: absolute;
 
     .jcake-panel-header {
-        .jcake-close-button {
-            cursor: pointer;
-            margin: 17px;
-            right: 0px;
-            top: 0px;
-            position: absolute;
-        }
-    }
-    .jcake-panel-titlebar {
-        @include linearGradient(#f5f5f5, #e3e3e3);
         @include rounded(6px, 6px, 0px, 0px);
-        @include shadowInside(0px, 1px, 0px, 0px, #fff);
 
-        background-color: #ececec;
-        border-bottom: 1px solid #cacaca;
-        font-size: 16px;
-        text-shadow: 0px 1px 0px #fff;
-
-        h1 {
-            color: #333;
-            display: inline-block;
-            font: {
-                family: $fontfamily;
-                size: 14px;
-                weight: bold;
-            }
-            line-height: 18px;
-            margin: 0px;
-            padding: 8px 45px 8px 15px;
+        background-color: #eee;
+        border: {
+            bottom: 1px solid #ddd;
+            top: 1px solid #fff;
         }
-        .jcake-close-button {
-            @include rounded(0px, 6px, 0px, 0px);
-            @include shadowInside(1px, 0px, 0px, 0px, #fff);
+        height: 50px;
+        padding: 0px 20px;
 
-            border-left: 1px solid #cacaca;
-            color: #aaa;
-            font-size: 23px;
-            height: 34px;
-            margin: 0px;
-            width: 33px;
-
-            &:hover {
-                background-color: #ececec;
-            }
-        }
         &.jcake-draggable {
             cursor: move;
+        }
+
+        &.jcake-closable h1 {
+            padding-right: 25px;
+        }
+
+        h1 {
+            color: #555;
+            font: {
+                family: $fontfamily;
+                size: 13px;
+                weight: bold;
+            }
+            line-height: 50px;
+            margin: 0px;
+            overflow: hidden;
+            padding: 0px;
+            text-overflow: ellipsis;
+            text-shadow: 0px 1px 0px #fff;
+            white-space: nowrap;
+        }
+        
+        .jcake-close-button {
+            height: 50px;
+            position: absolute;
+            right: 10px;
+            top: 1px;
+            width: 30px;
         }
     }
     .jcake-panel-content {
