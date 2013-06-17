@@ -160,7 +160,8 @@ class Panel
     me = @
 
     $closeBtn = $ "<button class='jcake-close-button' />"
-    $closeBtn.on "click", ->
+    $closeBtn.on "click", (e) ->
+      e.preventDefault()
       me.el.cakePanel "hide"
 
     $closeBtn
