@@ -1,6 +1,7 @@
 ###
 jcake
-cakedevp.github.com/jcake/
+http://cakedevp.github.io/jcake/
+20130617
 ###
 
 jcake =
