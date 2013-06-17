@@ -20,16 +20,16 @@
             .jcake-tabs-header {
                 @include rounded(0px, 0px, 4px, 4px);
 
+                border-top: none;
+
                 &:hover {
-                    border-top-color: #ccc;
+                    padding-top: 9px;
+                    margin-top: 1px;
                 }
 
                 &.jcake-tabs-header-selected {
-                    background-color: #fff;
-                    border-color: #ccc;
-                    border-top: 1px solid #fff;
-                    color: #555;
-                    cursor: auto;
+                    margin-top: 0px;
+                    padding-top: 10px;
                 }
             }
         }
@@ -39,23 +39,23 @@
             .jcake-tabs-header {
                 @include rounded(4px, 4px, 0px, 0px);
 
+                border-bottom: none;
+
                 &:hover {
-                    border-bottom-color: #ccc;
+                    padding-bottom: 9px;
+                    margin-bottom: -1px;
                 }
 
                 &.jcake-tabs-header-selected {
-                    background-color: #fff;
-                    border-color: #ccc;
-                    border-bottom: 1px solid #fff;
-                    color: #555;
-                    cursor: auto;
+                    margin-bottom: 0px;
+                    padding-bottom: 10px;
                 }
             }
         }
 
         .jcake-tabs-header {
             border: 1px solid transparent;
-            color: #aaa;
+            color: #999;
             cursor: pointer;
             float: left;
             font: {
@@ -68,6 +68,13 @@
             &:hover {
                 background-color: #efefef;
                 color: #888;
+            }
+
+            &.jcake-tabs-header-selected {
+                background-color: #fff;
+                border-color: #ccc;
+                color: #555;
+                cursor: auto;
             }
         }
     }
