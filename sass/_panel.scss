@@ -6,6 +6,7 @@
     border: 1px solid #cacaca;
     display: none;
     position: absolute;
+    z-index: 995;
 
     .jcake-panel-header {
         @include rounded(6px, 6px, 0px, 0px);
