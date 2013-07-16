@@ -17,13 +17,13 @@ files_to_compile = [
   "init"
 ]
 
-isFn = (fn, createEmpty) ->
-  isIt = typeof fn is "function"
+is_fn = (fn, create_empty) ->
+  is_it = typeof fn is "function"
 
-  if createEmpty
-    return if isIt then fn else new Function()
-  else
-    return isIt
+  if create_empty
+    return if is_it then fn else new Function()
+  
+  return is_it
 
 log = (message) ->
   console.log message
@@ -54,31 +54,31 @@ create_directory = (path) ->
       if not ex.code is "EEXIST"
         throw ex
 
-save_file = (path, content, doneFn) ->
+save_file = (path, content, done_fn) ->
   fs.writeFile(path, content, (err) ->
     if err?
       log err
       throw err
 
-    isFn(doneFn, yes)()
+    is_fn(done_fn, yes)()
   )
 
 verify_directories = ->
   create_directory dev_dir
   create_directory prod_dir
 
-exec = (command, doneFn) ->
+exec = (command, done_fn) ->
   cp.exec command, (err, stdout, stderr) ->
     if err?
       log stdout + stderr
       throw err if err
 
-    isFn(doneFn, yes)()
+    is_fn(done_fn, yes)()
 
-compress_js = (doneFn) ->
+compress_js = (done_fn) ->
   if module_exists "uglify-js"
     uglifier = require "uglify-js"
-    save_file "#{prod_dir}/jcake.js", uglifier.minify("#{dev_dir}/jcake.js").code, doneFn
+    save_file "#{prod_dir}/jcake.js", uglifier.minify("#{dev_dir}/jcake.js").code, done_fn
   else
     log "UglifyJS wasn't found. JavaScript code won't be compressed."
 
@@ -87,30 +87,30 @@ compress_js = (doneFn) ->
 
     rs.pipe ws
 
-    isFn(doneFn, yes)()
+    is_fn(done_fn, yes)()
 
-compile_coffee = (doneFn) ->
+compile_coffee = (done_fn) ->
   exec(
     "coffee -j #{dev_dir}/jcake.js  -c #{coffee_dir}/#{files_to_compile.join('.coffee ' + coffee_dir + '/')}.coffee",
-    doneFn
+    done_fn
   )
 
-compile_sass = (doneFn) ->
+compile_sass = (done_fn) ->
   exec(
     "sass #{sass_dir}/jcake.scss #{dev_dir}/jcake.css",
-    doneFn
+    done_fn
   )
 
-compile_compress_coffee = (doneFn) ->
+compile_compress_coffee = (done_fn) ->
   compile_coffee ->
     compress_js ->
-      isFn(doneFn, yes)()
+      is_fn(done_fn, yes)()
 
-compile_compress_sass = (doneFn) ->
+compile_compress_sass = (done_fn) ->
   compile_sass()
   exec(
     "sass --style compressed #{sass_dir}/jcake.scss #{prod_dir}/jcake.css",
-    doneFn
+    done_fn
   )
 
 compile = ->
