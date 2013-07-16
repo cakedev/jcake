@@ -63,6 +63,14 @@ save_file = (path, content, done_fn) ->
     is_fn(done_fn, yes)()
   )
 
+copy_file = (from, to, done_fn) ->
+  rs = fs.createReadStream from
+  ws = fs.createWriteStream to
+
+  rs.pipe ws
+  rs.on "end", ->
+    is_fn(done_fn, yes)()
+
 verify_directories = ->
   create_directory dev_dir
   create_directory prod_dir
@@ -82,12 +90,7 @@ compress_js = (done_fn) ->
   else
     log "UglifyJS wasn't found. JavaScript code won't be compressed."
 
-    rs = fs.createReadStream "#{dev_dir}/jcake.js"
-    ws = fs.createWriteStream "#{prod_dir}/jcake.js"
-
-    rs.pipe ws
-
-    is_fn(done_fn, yes)()
+    copy_file "#{dev_dir}/jcake.js", "#{prod_dir}/jcake.js", done_fn
 
 compile_coffee = (done_fn) ->
   exec(
