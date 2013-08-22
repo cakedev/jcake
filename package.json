@@ -1,0 +1,14 @@
+{
+	"name": "jcake",
+	"description": "Package builder for jcake",
+	"author": {
+		"name" : "Checo Galván",
+		"email" : "cakedev@outlook.com",
+		"url" : "https://github.com/cakedevp"
+	},
+	"version": "1.1.0",
+	"homepage": "http://cakedevp.github.io/jcake/",
+	"dependencies": {
+		"uglify-js": "*"
+	}
+}
