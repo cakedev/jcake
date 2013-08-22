@@ -1,6 +1,8 @@
 fs = require "fs"
 cp = require "child_process"
 
+version = "1.1.0"
+
 coffee_dir = "coffee"
 stylus_dir = "stylus"
 dev_dir = "lib/dev"
@@ -91,15 +93,17 @@ exec = (command, done_fn) ->
 compress_js = (done_fn) ->
   if module_exists "uglify-js"
     uglifier = require "uglify-js"
-    save_file "#{prod_dir}/jcake.js", uglifier.minify("#{dev_dir}/jcake.js").code, done_fn
+    content = "// jcake #{version}\n" + uglifier.minify("#{dev_dir}/jcake.js").code
+
+    save_file "#{prod_dir}/jcake.js", content, done_fn
   else
-    log "UglifyJS wasn't found. JavaScript code won't be compressed."
+    log "UglifyJS wasn't found. Development version will be used instead."
 
     copy_file "#{dev_dir}/jcake.js", "#{prod_dir}/jcake.js", done_fn
 
 compile_coffee = (done_fn) ->
   exec(
-    "coffee -j #{dev_dir}/jcake.js  -c #{coffee_dir}/#{files_to_compile.join('.coffee ' + coffee_dir + '/')}.coffee",
+    "coffee -j #{dev_dir}/jcake.js -c #{coffee_dir}/#{files_to_compile.join('.coffee ' + coffee_dir + '/')}.coffee",
     done_fn
   )
 
