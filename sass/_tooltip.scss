@@ -1,0 +1,57 @@
+.jcake-tooltip {
+    @include linearGradient(#333, #000);
+    @include rounded(3px, 3px, 3px, 3px);
+    @include opacity(0);
+
+    background-color: #000;
+    color: #eee;
+    font-size: 12px;
+    padding: 6px 10px 6px 10px;
+    position: absolute;
+    z-index: 999;
+
+    p {
+        margin: 0px;
+        padding: 0px;
+    }
+    .jcake-arrow {
+        position: absolute;
+        z-index: 999;
+    }
+    .jcake-arrow-up-black {
+        @include opacity(80);
+
+        height: 4px;
+        left: 50%;
+        margin: {
+            left: -3px;
+            top: -4px;
+        }
+        top: 0px;
+        width: 7px;
+    }
+    .jcake-arrow-right-black {
+        height: 7px;
+        left: 100%;
+        margin-top: -3px;
+        top: 50%;
+        width: 4px;
+    }
+    .jcake-arrow-down-black {
+        height: 4px;
+        left: 50%;
+        margin-left: -3px;
+        top: 100%;
+        width: 7px;
+    }
+    .jcake-arrow-left-black {
+        height: 7px;
+        left: 0px;
+        margin: {
+            left: -4px;
+            top: -3px;
+        }
+        top: 50%;
+        width: 4px;
+    }
+}
