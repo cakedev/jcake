@@ -2,9 +2,14 @@ fs = require "fs"
 cp = require "child_process"
 
 coffee_dir = "coffee"
-sass_dir = "sass"
+stylus_dir = "stylus"
 dev_dir = "lib/dev"
 prod_dir = "lib/prod"
+
+target_dev = "dev"
+target_prod = "prod"
+
+default_target = target_dev
 
 files_to_compile = [
   "main"
@@ -79,7 +84,7 @@ exec = (command, done_fn) ->
   cp.exec command, (err, stdout, stderr) ->
     if err?
       log stdout + stderr
-      throw err if err
+      throw err
 
     is_fn(done_fn, yes)()
 
@@ -98,9 +103,9 @@ compile_coffee = (done_fn) ->
     done_fn
   )
 
-compile_sass = (done_fn) ->
+compile_stylus = (done_fn) ->
   exec(
-    "sass #{sass_dir}/jcake.scss #{dev_dir}/jcake.css",
+    "stylus #{stylus_dir}/jcake.styl -o #{dev_dir}",
     done_fn
   )
 
@@ -109,41 +114,49 @@ compile_compress_coffee = (done_fn) ->
     compress_js ->
       is_fn(done_fn, yes)()
 
-compile_compress_sass = (done_fn) ->
-  compile_sass()
+compile_compress_stylus = (done_fn) ->
+  compile_stylus()
   exec(
-    "sass --style compressed #{sass_dir}/jcake.scss #{prod_dir}/jcake.css",
+    "stylus -c #{stylus_dir}/jcake.styl -o #{prod_dir}",
     done_fn
   )
 
+compile_compress = ->
+  compile_compress_coffee()
+  compile_compress_stylus()
+
 compile = ->
   compile_coffee()
-  compile_sass()
+  compile_stylus()
 
 watch_coffee = ->
   exec "coffee -w -j #{dev_dir}/jcake.js  -c #{coffee_dir}/#{files_to_compile.join('.coffee ' + coffee_dir + '/')}.coffee"
   log "Watching for changes on coffee files..."
 
-watch_sass = ->
-  exec "sass --watch #{sass_dir}/jcake.scss:#{dev_dir}/jcake.css"
-  log "Watching for changes on sass files..."
+watch_stylus = ->
+  exec "stylus -w #{stylus_dir}/jcake.styl -o #{dev_dir}"
+  log "Watching for changes on stylus files..."
 
 watch = ->
   watch_coffee()
-  watch_sass()
+  watch_stylus()
 
-task("watch", "Watch for changes to compile (development)", ->
+# TASKS
+
+option "-t", "--target [TARGET]", "Sets the compilation target. Production 'prod' or development 'dev'."
+
+task "watch", "Watch for changes to compile (for development).", ->
   verify_directories()
   watch()
-)
 
-task("compile:dev", "Compile for development", ->
+task "compile", "Compile both coffee and stylus files. You can specify the target (-t) for this task.", (params) ->
   verify_directories()
-  compile()
-)
 
-task("compile:prod", "Compile for production", ->
-  verify_directories()
-  compile_compress_coffee()
-  compile_compress_sass()
-)
+  target = params.target or default_target
+
+  if target is target_prod
+    compile_compress()
+  else if target is target_dev
+    compile()
+  else
+    log "Invalid target"
