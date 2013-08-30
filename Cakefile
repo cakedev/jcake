@@ -5,8 +5,8 @@ version = "1.1.0"
 
 coffee_dir = "coffee"
 stylus_dir = "stylus"
-dev_dir = "lib/dev"
-prod_dir = "lib/prod"
+dev_dir = "dist/dev"
+prod_dir = "dist/prod"
 
 target_dev = "dev"
 target_prod = "prod"
@@ -20,17 +20,8 @@ files_to_compile = [
   "slideshow",
   "tooltip",
   "table",
-  "panel",
-  "init"
+  "panel"
 ]
-
-is_fn = (fn, create_empty) ->
-  is_it = typeof fn is "function"
-
-  if create_empty
-    return if is_it then fn else new Function()
-  
-  return is_it
 
 log = (message) ->
   console.log message
@@ -67,7 +58,7 @@ save_file = (path, content, done_fn) ->
       log err
       throw err
 
-    is_fn(done_fn, yes)()
+    done_fn?()
   )
 
 copy_file = (from, to, done_fn) ->
@@ -76,7 +67,7 @@ copy_file = (from, to, done_fn) ->
 
   rs.pipe ws
   rs.on "end", ->
-    is_fn(done_fn, yes)()
+    done_fn?()
 
 verify_directories = ->
   create_directory dev_dir
@@ -88,7 +79,7 @@ exec = (command, done_fn) ->
       log stdout + stderr
       throw err
 
-    is_fn(done_fn, yes)()
+    done_fn?()
 
 compress_js = (done_fn) ->
   if module_exists "uglify-js"
@@ -116,7 +107,7 @@ compile_stylus = (done_fn) ->
 compile_compress_coffee = (done_fn) ->
   compile_coffee ->
     compress_js ->
-      is_fn(done_fn, yes)()
+      done_fn?()
 
 compile_compress_stylus = (done_fn) ->
   compile_stylus()
