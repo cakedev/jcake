@@ -25,6 +25,14 @@ jcake.plugin(
         width: $el.data "width"
         height: $el.data "height"
         centered: $el.data "centered"
+
+    $(document).on "mousemove", (event) ->
+      jcake.eachCmp (cmp, id) ->
+        cmp.onMousemove(event) if cmp instanceof Panel
+
+    $(document).on "mouseup", ->
+      jcake.eachCmp (cmp, id) ->
+        cmp.setDragging(no) if cmp instanceof Panel
 )
 
 class Panel
@@ -186,14 +194,3 @@ class Panel
 
     @panel.css "left", "50%"
     @panel.css "margin-left", "-#{Math.round(@panel.width() / 2)}px"
-
-$(document).ready ->
-  $(document).on "mousemove", (event) ->
-    jcake.eachCmp (cmp, id) ->
-      if cmp instanceof Panel
-        cmp.onMousemove event
-
-  $(document).on "mouseup", ->
-    jcake.eachCmp (cmp, id) ->
-      if cmp instanceof Panel
-        cmp.setDragging no

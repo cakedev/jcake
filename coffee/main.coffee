@@ -2,13 +2,13 @@ jcake =
   plugins: {}
   components: {}
 
-  eachPlugin: (lambda) ->
+  eachPlugin: (fn) ->
     for id, plugin of @plugins
-      lambda.call plugin, plugin, id
+      fn.call plugin, plugin, id
 
-  eachCmp: (lambda) ->
+  eachCmp: (fn) ->
     for id, cmp of @components
-      lambda.call cmp, cmp, id
+      fn.call cmp, cmp, id
 
   getCmp: ($el) ->
     id = $el.data "jcakeId"
@@ -94,5 +94,7 @@ jcake =
 
   init: ->
     @eachPlugin (plugin, id) ->
-      if typeof plugin.initFn is "function"
-        plugin.initFn()
+      plugin.initFn?()
+
+$ ->
+  jcake.init()

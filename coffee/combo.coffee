@@ -3,7 +3,7 @@ jcake.plugin(
   [ "setValue", "getValue", "setItems", "setTitle" ]
   ($el, props) ->
     if not $el.is "select"
-      jcake.log "Element must be a 'select' component to bahave as a combo"
+      jcake.log "Element must be a 'select' component to behave as a combo"
       return null
 
     props = if props? then props else {}
@@ -19,6 +19,11 @@ jcake.plugin(
       $el.cakeCombo
         title: $el.data "title"
         maxWidth: $el.data "maxWidth"
+
+    $(document).on "click", (e) ->
+      $el = $(e.target).closest ".jcake-combo-wrapper"
+      $panel = $el.find ".jcake-combo-panel"
+      $(".jcake-combo-wrapper").find(".jcake-combo-panel").not($panel).cakePanel "hide"
 )
 
 class Combo
@@ -62,7 +67,7 @@ class Combo
 
     me = @
 
-    @combo.on "mouseenter", ->
+    @combo.on "mouseover", ->
       $(@).find(".jcake-combo-arrow").addClass "jcake-arrow-down-white"
 
     @combo.on "mouseleave", ->
@@ -132,10 +137,10 @@ class Combo
 
     $items.find(".jcake-combo-item").on("click", ->
       me.selectItem $(@).data("index")
-    ).on("hover", ->
-      $me = $ @
-      $me.parent().find(".jcake-combo-item").removeClass "jcake-combo-item-hover"
-      $me.addClass "jcake-combo-item-hover"
+    ).on("mouseover", ->
+      $item = $ @
+      $item.parent().find(".jcake-combo-item").removeClass "jcake-combo-item-hover"
+      $item.addClass "jcake-combo-item-hover"
     )
 
     return @el
@@ -284,9 +289,3 @@ class Combo
               $panelItems.eq(i).addClass "jcake-combo-item-hidden"
 
         @focusFirst()
-
-$(document).ready ->
-  $(document).on "click", (e) ->
-    $el = $(e.target).closest ".jcake-combo-wrapper"
-    $panel = $el.find ".jcake-combo-panel"
-    $(".jcake-combo-wrapper").find(".jcake-combo-panel").not($panel).cakePanel "hide"
