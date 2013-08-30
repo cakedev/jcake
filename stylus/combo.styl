@@ -10,7 +10,7 @@
     display: none
 
   .jcake-combo
-    rounded(3px)
+    rounded 3px
 
     background-color: #eee
     border: 1px solid #cacaca
@@ -30,7 +30,7 @@
         border-color: #7698bc
 
     &:active
-      shadow(inside 0px 0px 15px 0px rgba(0, 0, 0, 0.4))
+      shadow inset 0px 0px 15px 0px rgba(0, 0, 0, 0.4)
 
     .jcake-combo-text
       border-right: 1px solid #cacaca
@@ -74,24 +74,26 @@
         text-align: center;
 
         .jcake-combo-search
-          animate(border 200ms, box-shadow 200ms)
-          box_sizing(border-box)
-          rounded(4px)
-          shadow(0 0 0 0 rgba(0, 0, 0, 0), inside 0 1px 1px 0 rgba(0, 0, 0, 0.075))
+          animate border 200ms, box-shadow 200ms
+          box_sizing border-box
+          rounded 4px
+          shadow 0 0 0 0 rgba(0, 0, 0, 0), inset 0 1px 1px 0 rgba(0, 0, 0, 0.075)
 
           border: 1px solid #ccc
+          font-family: font_family
+          font-size: 12px
           min-width: 250px
           padding: 8px
           width: 100%
 
           &:focus
-            shadow(0px 0px 8px 0px rgba(82, 168, 236, 0.6), inside 0px 1px 1px 0px rgba(0, 0, 0, 0.075))
+            shadow 0px 0px 8px 0px rgba(82, 168, 236, 0.6), inset 0px 1px 1px 0px rgba(0, 0, 0, 0.075)
 
             border-color: rgba(82, 168, 236, 0.8)
             outline: 0
 
       .jcake-combo-items
-        rounded(0px 0px 6px 6px)
+        rounded 0px 0px 6px 6px
 
         max-height: 300px
         overflow: auto
