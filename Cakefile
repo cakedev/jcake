@@ -74,12 +74,15 @@ verify_directories = ->
   create_directory prod_dir
 
 exec = (command, done_fn) ->
-  cp.exec command, (err, stdout, stderr) ->
+  process = cp.exec command, (err, stdout, stderr) ->
     if err?
       log stdout + stderr
       throw err
 
     done_fn?()
+
+  process.stdout.on "data", (data) ->
+    log data.toString()
 
 compress_js = (done_fn) ->
   if module_exists "uglify-js"
