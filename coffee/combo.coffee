@@ -2,46 +2,44 @@ jcake.plugin(
   "cakeCombo"
   [ "setValue", "getValue", "setItems", "setTitle" ]
   ($el, props) ->
-    if not $el.is "select"
-      jcake.log "Element must be a 'select' component to behave as a combo"
-      return null
+    if not $el.is("select")
+      jcake.log("Element must be a 'select' component to behave as a combo")
+      return
 
     props = if props? then props else {}
 
     title = props.title if props.title
-    maxWidth = props.maxWidth if props.maxWidth
 
-    return new Combo $el, title, maxWidth
+    return new Combo($el, title)
   ->
     $(".x-jcake-combo").each ->
-      $el = $ @
+      $el = $(this)
 
       $el.cakeCombo
         title: $el.data "title"
-        maxWidth: $el.data "maxWidth"
 
     $(document).on "click", (e) ->
-      $el = $(e.target).closest ".jcake-combo-wrapper"
-      $panel = $el.find ".jcake-combo-panel"
-      $(".jcake-combo-wrapper").find(".jcake-combo-panel").not($panel).cakePanel "hide"
+      $el = $(e.target).closest(".jcake-combo-wrapper")
+      $panel = $el.find(".jcake-combo-panel")
+      $(".jcake-combo-wrapper").find(".jcake-combo-panel").not($panel).cakePanel("hide")
 )
 
 class Combo
-  constructor: (@el, title, maxWidth) ->
-    @wrapper = $ "<div class='jcake-combo-wrapper' />"
 
-    @wrapper.insertAfter @el
-    @wrapper.append @el
+  constructor: (@el, title) ->
+    me = this
 
-    @combo = $ "<div class='jcake-combo' />"
+    me.wrapper = $("<div class='jcake-combo-wrapper' />")
 
-    @combo.append "<div class='jcake-combo-text' />"
-    @combo.append "<div class='jcake-combo-arrow jcake-icon jcake-arrow-down-black' />"
+    me.wrapper.insertAfter(@el)
+    me.wrapper.append(@el)
 
-    @wrapper.append @combo
+    me.combo = $("<div class='jcake-combo' />")
 
-    if maxWidth?
-      @combo.find(".jcake-combo-text").css "max-width", "#{maxWidth - 49}px"
+    me.combo.append "<div class='jcake-combo-text' />"
+    me.combo.append "<div class='jcake-combo-arrow jcake-icon jcake-arrow-down-black' />"
+
+    me.wrapper.append me.combo
 
     @panel = $ "<div class='jcake-combo-panel' />"
     
@@ -67,12 +65,6 @@ class Combo
 
     me = @
 
-    @combo.on "mouseover", ->
-      $(@).find(".jcake-combo-arrow").addClass "jcake-arrow-down-white"
-
-    @combo.on "mouseleave", ->
-      $(@).find(".jcake-combo-arrow").removeClass "jcake-arrow-down-white"
-
     @combo.on "click", ->
       me.showPanel()
 
@@ -80,24 +72,19 @@ class Combo
     @keysPressedCount = 0
 
     $search.on "keydown", (e) ->
-      if e.keyCode is 13
-        me.selectCurrentItem()
-      else if e.keyCode is 27
-        me.hidePanel()
-      else if e.keyCode is 38
-        me.movePrevious()
-      else if e.keyCode is 40
-        me.moveNext()
-      else
-        me.keysPressedCount++
-        $me = $ @
+      switch e.keyCode
+        when 13 then me.selectCurrentItem()
+        when 27 then me.hidePanel()
+        when 38 then me.movePrevious()
+        when 40 then me.moveNext()
+        else
+          me.keysPressedCount++
+          $me = $ @
 
-        setTimeout(
-          ->
+          setTimeout ->
             me.keysPressedCount--
             me.setFilter $me.val() if me.keysPressedCount is 0
-          me.filterDelay
-        )
+          , me.filterDelay
 
     value = @el.val()
 
