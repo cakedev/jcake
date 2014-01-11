@@ -1,6 +1,6 @@
 jcake.plugin(
   "cakeSlideshow"
-  []
+  [ "next", "prev", "goTo" ]
   ($el, props) ->
     props = if props? then props else {}
     
@@ -10,12 +10,11 @@ jcake.plugin(
     autoNavigate = if props.autoNavigate? then props.autoNavigate else yes
     delay = if props.delay? then props.delay else 2000
     rotate = if props.rotate? then props.rotate else yes
-    navigationMargin = if props.navigationMargin? then props.navigationMargin else 20
 
-    return new Slideshow $el, height, disableNavigation, animationSpeed, autoNavigate, delay, rotate, navigationMargin
+    return new Slideshow($el, height, disableNavigation, animationSpeed, autoNavigate, delay, rotate)
   ->
     $(".x-jcake-slideshow").each ->
-      $el = $ @
+      $el = $(@)
 
       $el.cakeSlideshow
         height: $el.data "height"
@@ -24,161 +23,85 @@ jcake.plugin(
         autoNavigate: $el.data "autoNavigate"
         delay: $el.data "delay"
         rotate: $el.data "rotate"
-        navigationMargin: $el.data "navigationMargin"
 )
 
 class Slideshow
-  constructor: (@el, @height, @disableNavigation, @animationSpeed, @autoNavigate, @delay, @rotate, @navigationMargin) ->
-    @currentIndex = 0
-    @animating = no
+  constructor: (@el, @height, @disableNavigation, @animationSpeed, @autoNavigate, @delay, @rotate) ->
+    $children = @el.children()
 
-    fixedHeight = no
+    if not $children.length
+      throw new Error("Slideshow requires at least 1 slide")
 
-    if @height?
-      fixedHeight = yes
-      @el.css "height", if isNaN(@height) then @height else "#{@height}px"
+    @slides = []
 
-    @slides = @el.children "div"
-    @el.addClass "jcake-slideshow"
-    @height = @el.height()
+    for i in [0..$children.length]
+      @slides.push $children.eq(i).addClass("jcake-slideshow-slide")
 
-    if not fixedHeight
-      maxHeight = 0
+    @effect = new SlideEffect(@animationSpeed)
+    @current = 0
 
-      for i in [0...@slides.length]
-        maxHeight = @slides.eq(i).height() if @slides.eq(i).height() > maxHeight
+    @el.addClass("jcake-slideshow")
 
-      height = maxHeight
-      @el.css "height", "#{height}px"
+    @goTo 0
 
-    for i in [0...@slides.length]
-      $slide = @slides.eq i
+  getCurrentSlide: ->
+    return $slides[@current]
 
-      $slide.addClass "jcake-slideshow-slide"
-      $slide.css "height", "#{height}px"
+  next: ->
+    $currentSlide = @getCurrentSlide()
 
-    @slides.not(":eq(0)").css "margin-left", "#{@el.width()}px"
+    @current++
 
-    @setNavigationControls() if not @disableNavigation
-    @setAutoNavigation() if @autoNavigate
+    if @current >= @slides.left
+      @current = 0
 
-  setNavigationControls: ->
-    width = @el.width()
-    height = @el.height();
+    $next = getCurrentSlide()
 
-    $arrowleft = $ "<div class='jcake-slideshow-arrowleft' />"
-    $arrowright = $ "<div class='jcake-slideshow-arrowright' />"
+    if $current isnt $next
+      @effect.leave $current
+      @effect.enter $next
 
-    @el.append $arrowleft
-    @el.append $arrowright
+    return @
 
-    $arrowleft.css "left", "#{@navigationMargin}px"
-    $arrowright.css "left", (width - $arrowright.width() - @navigationMargin) + "px"
+  prev: ->
+    $currentSlide = @getCurrentSlide()
 
-    me = @
+    @current--
 
-    $arrowleft.on "click", ->
-      me.autoNavigate = no
-      me.movePrevious()
+    if @current < 0
+      @current = $slides.length - 1
 
-    $arrowright.on "click", ->
-      me.autoNavigate = no
-      me.moveNext()
+    $next = getCurrentSlide()
 
-  setAutoNavigation: ->
-    @navigate()
+    if $current isnt $next
+      @effect.leave $current
+      @effect.enter $next
 
-  navigate: ->
-    me = @
-    setTimeout(
-      ->
-        if me.autoNavigate
-          me.moveNext -> me.navigate()
-      @delay
-    )
+    return @
 
-  moveNext: (callback, animationSpeed) ->
-    if not @animating
-      if @slides.length > 1
-        speed = if animationSpeed? then animationSpeed else @animationSpeed
+  goTo: (index) ->
+    if index is @current
+      return @
 
-        if @currentIndex is @slides.length - 1
-          if @rotate
-            speed = Math.round(speed / @slides.length) + 100
-            @moveToFirst speed, callback
-        else
-          me = @
-          @animating = true
+class SlideEffect
+  constructor: (@speed) ->
 
-          @changeSlide(
-            @slides.eq(@currentIndex),
-            @slides.eq(@currentIndex + 1),
-            speed,
-            "f",
-            ->
-              me.animating = false
-              me.currentIndex++
+  comeback: ($slide, fn) ->
+    $slide
+      .css("left", "100%")
+      .animate({ left: "0%" }, @speed, fn)
 
-              if typeof callback is "function"
-                callback()
-          )
+  enter: ($slide, fn) ->
+    $slide
+      .css("left", "-100%")
+      .animate({ left: "0%" }, @speed, fn)
 
-  movePrevious: (callback, animationSpeed) ->
-    if not @animating
-      if @slides.length > 1
-        speed = if animationSpeed? then animationSpeed else @animationSpeed
+  leave: ($slide, fn) ->
+    $slide
+      .css("left", "0%")
+      .animate({ left: "100%" }, @speed, fn)
 
-        if @currentIndex is 0
-          if @rotate
-            speed = Math.round(speed / @slides.length) + 100
-            @moveToLast speed, callback
-        else
-          me = @
-          @animating = true
-
-          @changeSlide(
-            @slides.eq(@currentIndex),
-            @slides.eq(@currentIndex - 1),
-            speed,
-            "b",
-            ->
-              me.animating = false
-              me.currentIndex--
-
-              if typeof callback == "function"
-                callback()
-          )
-
-  moveToFirst: (slideAnimationSpeed, callback) ->
-    if @currentIndex > 0
-      me = @
-      @movePrevious(
-        -> me.moveToFirst slideAnimationSpeed, callback
-        slideAnimationSpeed
-      )
-    else
-      if typeof callback is "function"
-        callback()
-
-  moveToLast: (slideAnimationSpeed, callback) ->
-    if @currentIndex < @slides.length - 1
-      me = @
-      @moveNext(
-        -> me.moveToLast slideAnimationSpeed, callback
-        slideAnimationSpeed
-      )
-    else
-      if typeof callback is "function"
-        callback()
-
-  changeSlide: ($current, $new, speed, direction, callback) ->
-    $current.css "z-index", 990
-    $new.css "z-index", 991
-    $new.animate { marginLeft: "0px" }, speed, "linear", ->
-      if typeof callback is "function"
-        callback()
-
-    if direction is "f"
-      $current.animate { marginLeft: "-#{$current.width()}px" }, speed, "linear"
-    else if direction is "b"
-      $current.animate { marginLeft: "#{$current.width()}px" }, speed, "linear"
+  return: ($slide, fn) ->
+    $slide
+      .css("left", "0%")
+      .animate({ left: "-100%" }, @speed, fn)
