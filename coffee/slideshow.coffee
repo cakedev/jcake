@@ -7,114 +7,188 @@ jcake.plugin(
     height = props.height
     speed = if props.speed? then props.speed else 400
     delay = if props.delay? then props.delay else 2000
-    autoNavigate = if props.autoNavigate? then props.autoNavigate else yes
     rotate = if props.rotate? then props.rotate else yes
-    disableNavigation = if props.disableNavigation? then props.disableNavigation else no
+    effect = if props.effect? then props.effect else "slide"
+    autoNavigate = if props.autoNavigate? then props.autoNavigate else yes
 
-    return new Slideshow($el, height, speed, delay, autoNavigate, rotate, disableNavigation)
+    return new Slideshow($el, height, speed, delay, rotate, effect, autoNavigate)
   ->
     $(".x-jcake-slideshow").each ->
       $el = $(@)
 
       $el.cakeSlideshow
-        height: $el.data "height"
-        speed: $el.data "speed"
-        delay: $el.data "delay"
-        autoNavigate: $el.data "autoNavigate"
-        rotate: $el.data "rotate"
-        disableNavigation: $el.data "disableNavigation"
+        height: $el.data("height")
+        speed: $el.data("speed")
+        delay: $el.data("delay")
+        rotate: $el.data("rotate")
+        effect: $el.data("effect")
+        autoNavigate: $el.data("autoNavigate")
 )
 
 class Slideshow
-  constructor: (@el, @height, @speed, @delay, @autoNavigate, @rotate, @disableNavigation) ->
-    $childrens = @el.children()
+  constructor: (@el, @height, @speed, @delay, @rotate, effect, @autoNavigate) ->
+    @slides = @el.children()
 
-    if not $childrens.length
+    if not @slides.length
       throw new Error("Slideshow requires at least 1 slide")
 
-    @slides = []
-
-    for i in [0...$childrens.length]
-      @slides.push $childrens.eq(i).addClass("jcake-slideshow-slide").hide()
-
-    @slides[0].show()
-
-    @effect = new SlideEffect(@speed)
+    @effect = @getEffect(effect)
     @current = 0
 
     @el.addClass("jcake-slideshow")
 
-    if not @height?
+    if @height?
+      @el.css("height", @height)
+    else
       @el.css("height", @getCurrentSlide().outerHeight())
 
-    if @autoNavigate
-      @navigate()
+    @slides
+      .addClass("jcake-slideshow-slide")
+      .hide()
+      .eq(0).show()
+
+    @setNavigationControls()
+    @updateNavigation()
+
+    @navigate() if @autoNavigate
+
+  getEffect: (id) ->
+    switch id
+      when "slide" then new SlideEffect(@speed)
+      when "fade" then new FadeEffect(@speed)
+      else new SlideEffect(@speed)
+
+  setNavigationControls: ->
+    me = @
+
+    addListener = ($el, index) ->
+      $el.on "click", ->
+        if not $(@).hasClass("jcake-slideshow-bullet-selected")
+          if not @animating
+            me.disableNavigation()
+            me.goTo(index)
+
+    $container = $("<div class='jcake-slideshow-navigation' />")
+
+    for i in [0...@slides.length]
+      $bullet = $("<span class='jcake-slideshow-bullet' />")
+      $bullet.append("<span class='jcake-slideshow-bullet-dot' />")
+
+      $container.append($bullet)
+      addListener($bullet, i)
+
+    @el.append($container)
+
+  updateNavigation: ->
+    @el.find(".jcake-slideshow-bullet")
+      .removeClass("jcake-slideshow-bullet-selected")
+      .eq(@current).addClass("jcake-slideshow-bullet-selected")
 
   navigate: ->
     me = @
 
-    setTimeout ->
-        me.next().navigate()
+    @navigationTimeout = setTimeout ->
+        me.next ->
+          me.navigate()
       , @delay
 
+  disableNavigation: ->
+    clearTimeout(@navigationTimeout)
+
   getCurrentSlide: ->
-    return @slides[@current]
+    return @slides.eq(@current)
 
   getSlide: (index) ->
-    return @slides[index]
+    return @slides.eq(index)
 
-  next: ->
-    if not @rotate and @current is (@slides.length - 1)
+  getSlidesCount: ->
+    return @slides.length
+
+  next: (doneFn) ->
+    if @animating
       return @
 
-    $current = @getCurrentSlide()
+    if not @rotate and @current is (@getSlidesCount() - 1)
+      return @
 
-    @current++
+    me = @
 
-    if @current >= @slides.length
-      @current = 0
+    $current = me.getCurrentSlide()
 
-    $next = @getCurrentSlide()
+    me.current++
+
+    if me.current >= me.getSlidesCount()
+      me.current = 0
+
+    $next = me.getCurrentSlide()
+
+    me.animating = yes
 
     if $current isnt $next
-      @effect.leave($current)
-      @effect.enter($next)
+      me.effect.leave($current)
+      me.effect.enter $next, ->
+        me.animating = no
+        me.updateNavigation()
+        doneFn?()
 
     return @
 
-  prev: ->
+  prev: (doneFn) ->
+    if @animating
+      return @
+
     if not @rotate and @current is 0
       return @
 
-    $current = @getCurrentSlide()
+    me = @
 
-    @current--
+    $current = me.getCurrentSlide()
 
-    if @current < 0
-      @current = $slides.length - 1
+    me.current--
 
-    $next = getCurrentSlide()
+    if me.current < 0
+      me.current = me.getSlidesCount() - 1
+
+    $next = me.getCurrentSlide()
+
+    me.animating = yes
 
     if $current isnt $next
-      @effect.leave($current)
-      @effect.enter($next)
+      me.effect.leave($current)
+      me.effect.enter $next, ->
+        me.animating = no
+        me.updateNavigation()
+        doneFn?()
 
     return @
 
-  goTo: (index) ->
-    if index is @current
+  goTo: (index, doneFn) ->
+    if @animating
       return @
 
-    if index > -1 and index < @slides.length
-      $current = @getCurrentSlide()
-      $next = @getSlide(index)
+    if index is @current
+      doneFn?()
+      return @
 
-      if index < @current
-        @effect.return($current)
-        @effect.comeback($)
+    if index > -1 and index < @getSlidesCount()
+      $current = @getCurrentSlide()
+      @current = index
+      $next = @getCurrentSlide()
+
+      me = @
+      me.animating = yes
+
+      finish = ->
+        me.animating = no
+        me.updateNavigation()
+        doneFn?()
+
+      if index < me.current
+        me.effect.return($current)
+        me.effect.comeback($next, finish)
       else
-        @effect.leave($current)
-        @effect.enter($next)
+        me.effect.leave($current)
+        me.effect.enter($next, finish)
 
 class Effect
   constructor: (@speed) ->
